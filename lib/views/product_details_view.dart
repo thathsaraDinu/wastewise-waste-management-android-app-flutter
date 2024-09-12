@@ -10,11 +10,13 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   int itemAmount = 1;
-
+  Color? selectedColor;
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> item =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final List<Color> colors = List<Color>.from(item['colors']);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -62,14 +64,14 @@ class _ProductDetailsState extends State<ProductDetails> {
             height: 10.0,
           ),
           sizeselectarea(),
-          colorselectarea(), //color select
+          colorselectarea(colors), //color select
           buybuttons(),
         ],
       ),
     );
   }
 
-  Column colorselectarea() {
+  Column colorselectarea(List<Color> colors) {
     return Column(
       children: [
         Row(
@@ -89,20 +91,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                            color: Colors.blue[100],
+                    children: colors.map((color) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedColor = color;
+                          });
+                        },
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            color: color,
                             border: Border.all(
-                              color: Colors.blue,
-                              width: 1,
+                              color: color == selectedColor
+                                  ? lightenColor(color)
+                                  : Colors.white,
+                              width: 3,
                             ),
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -111,10 +123,18 @@ class _ProductDetailsState extends State<ProductDetails> {
           ],
         ),
         const SizedBox(
-          height: 10.0,
+          height: 20.0,
         ),
       ],
     );
+  }
+
+  Color lightenColor(Color color, [double amount = 0.3]) {
+    assert(amount >= 0 && amount <= 1, 'Amount should be between 0 and 1');
+    int r = (color.red + (255 - color.red) * amount).toInt();
+    int g = (color.green + (255 - color.green) * amount).toInt();
+    int b = (color.blue + (255 - color.blue) * amount).toInt();
+    return Color.fromARGB(color.alpha, r, g, b);
   }
 
   Column sizeselectarea() {
