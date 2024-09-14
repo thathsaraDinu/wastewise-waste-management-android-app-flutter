@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shoppingapp/models/cart_model.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize; // Implement preferredSize
 
   final String name;
+  
   const CustomAppBar({super.key, required this.name})
       : preferredSize = const Size.fromHeight(kToolbarHeight);
 
@@ -16,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         
         toolbarHeight: 100,
         actionsIconTheme: IconThemeData(color: Colors.green[900], size: 30),
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black, 
         backgroundColor: Colors.transparent,
         title: Row(
           children: [
@@ -31,7 +33,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/shoppingcart' );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.account_circle),

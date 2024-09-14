@@ -1,5 +1,5 @@
-import 'package:shoppingapp/views/product_cards_grid.dart';
 import 'package:flutter/material.dart';
+import 'package:shoppingapp/views/product_cards_grid.dart';
 import 'package:shoppingapp/views/product_types_list.dart';
 import 'package:shoppingapp/common/background_image.dart';
 import 'package:shoppingapp/common/custom_app_bar.dart';
@@ -8,17 +8,17 @@ class RecycledItems extends StatefulWidget {
   const RecycledItems({super.key});
 
   @override
-  State<RecycledItems>
-   createState() => RecycledItemsState();
+  State<RecycledItems> createState() => RecycledItemsState();
 }
 
 class RecycledItemsState extends State<RecycledItems> {
-   @override
+  final FocusNode _focusNode = FocusNode();
+
+  @override
   void initState() {
     super.initState();
-
-    // This will unfocus any text field when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure the TextField is unfocused when the widget is first built
       WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
     });
   }
@@ -28,12 +28,11 @@ class RecycledItemsState extends State<RecycledItems> {
     return BackgroundWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CustomAppBar( name: 'WasteWise'),
+        appBar: const CustomAppBar(name: 'WasteWise'),
         body: GestureDetector(
           onTap: () {
-            FocusScope.of(context).unfocus(); // Unfocus TextField
+            _focusNode.unfocus(); // Unfocus TextField when tapping outside
           },
-          
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -42,10 +41,11 @@ class RecycledItemsState extends State<RecycledItems> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: TextField(
-                      focusNode: FocusNode(),
+                      focusNode: _focusNode,
                       autofocus: false,
                       decoration: InputDecoration(
-                        prefixIconColor: const Color.fromARGB(255, 174, 174, 174),
+                        prefixIconColor:
+                            const Color.fromARGB(255, 174, 174, 174),
                         contentPadding: const EdgeInsets.all(8.0),
                         fillColor: Colors.white,
                         filled: true,
@@ -152,5 +152,3 @@ class RecycledItemsState extends State<RecycledItems> {
     );
   }
 }
-
-
