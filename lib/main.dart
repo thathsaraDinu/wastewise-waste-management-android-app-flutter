@@ -3,10 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shoppingapp/models/cart_model.dart';
-import 'package:shoppingapp/routes/routes.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingapp/routes/routes.dart';
+import 'package:user_repository/user_repository.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
@@ -23,9 +24,22 @@ void main() async {
     await Firebase.initializeApp();
   }
   debugPaintSizeEnabled = false; // Optionally enable for debugging
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => CartModel())],
-      child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<FirebaseUserRepo>(
+          create: (context) => FirebaseUserRepo(),
+        ),
+        StreamProvider<MyUser>(
+          create: (context) =>
+              Provider.of<FirebaseUserRepo>(context, listen: false).user,
+          initialData: MyUser.empty, // Default value if no user is logged in
+        ),
+        ChangeNotifierProvider(create: (_) => CartModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

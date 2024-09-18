@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shoppingapp/common/background_image.dart';
+import 'package:shoppingapp/screens/profile_page.dart';
 import 'package:shoppingapp/screens/recycled_items_main.dart';
 
-
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key}) ;
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -23,7 +22,9 @@ class _HomePageState extends State<HomePage> {
     Center(child: RecycledItems()),
     Center(child: Text('Search Page')),
     Center(child: Text('Settings Page')),
-    Center(child: Text('Profile Page')),
+    Center(
+      child: ProfilePage(),
+    )
   ];
 
   @override

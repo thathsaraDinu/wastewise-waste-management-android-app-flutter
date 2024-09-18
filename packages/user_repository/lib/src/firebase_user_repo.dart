@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import './models/user.dart';
-import './entities/user_entity.dart';
+import './models/models.dart';
+import './entities/entities.dart';
 import './user_repo.dart';
 
-class FirebaseUserRepo implements UserRepository {
+class FirebaseUserRepo extends ChangeNotifier implements UserRepository {
   final FirebaseAuth _firebaseAuth;
   final usersCollection = FirebaseFirestore.instance.collection('users');
 
   FirebaseUserRepo({FirebaseAuth? firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
-  @override
+  User? get currentUser => _firebaseAuth.currentUser;
+
+
   Future<MyUser> getUser() {
     // TODO: implement getUser
     throw UnimplementedError();
@@ -46,6 +49,9 @@ class FirebaseUserRepo implements UserRepository {
           email: myuser.email, password: password);
       myuser.uid = user.user!.uid;
 
+
+      // Store user details in Firestore
+      await usersCollection.doc(myuser.uid).set(myuser.toEntity().toDocument());
       return myuser;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.message);
@@ -53,13 +59,18 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
-  Future<void> updateUser(MyUser user) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  Future<void> updateUser(MyUser user) async {
+    try {
+      await usersCollection.doc(user.uid).update(user.toEntity().toDocument());
+
+
+      // Store user details in Firestore
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message);
+    }
   }
 
   @override
-  // TODO: implement user
   Stream<MyUser> get user {
     return _firebaseAuth.authStateChanges().flatMap((firebaseUser) async* {
       if (firebaseUser == null) {
