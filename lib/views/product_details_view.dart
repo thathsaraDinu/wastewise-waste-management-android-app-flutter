@@ -33,11 +33,18 @@ class _ProductDetailsState extends State<ProductDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item['name'],
-                style: const TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
+              Hero(
+                tag: 'productname${item['name']}',
+                child: Material(
+                  color: Colors.transparent,
+                  child: Text(
+                    item['name'],
+                    style: const TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
               const Spacer(),
@@ -287,13 +294,29 @@ class _ProductDetailsState extends State<ProductDetails> {
           onPressed: () {
             if (selectedColor == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Please select a color!',
+                SnackBar(
+                  content: Container(
+                    height: 50, // Adjust the height of the SnackBar
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Please select a color!',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  duration: Duration(seconds: 2),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  duration: const Duration(seconds: 2),
                   backgroundColor:
-                      Colors.red, // Optional: customize the background color
+                      Colors.red.withOpacity(0.5), // 50% transparency
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height *
+                        0.4, // Center vertically
+                    horizontal: 50, // Center horizontally with some margin
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        10), // Optional: Add rounded corners
+                  ),
                 ),
               );
             } else {
@@ -302,15 +325,33 @@ class _ProductDetailsState extends State<ProductDetails> {
                 print('added');
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Item added to cart!',
+                SnackBar(
+                  content: Container(
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Item added to cart!',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  duration: Duration(seconds: 2),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  duration: const Duration(seconds: 2),
+                  backgroundColor:
+                      Colors.black.withOpacity(0.5), // 50% transparency
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height *
+                        0.4, // Center vertically
+                    horizontal: 50, // Center horizontally with some margin
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             }
           },
+
           child: const Text('Add to Cart', style: TextStyle(fontSize: 18.0)),
         ),
         const SizedBox(

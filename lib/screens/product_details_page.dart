@@ -14,6 +14,8 @@ class ProductPage extends StatefulWidget {
 class ProductPageState extends State<ProductPage> {
   final ScrollController _scrollController = ScrollController();
 
+  
+
   void _scrollToWidth(double width) {
     _scrollController.animateTo(
       width,
@@ -26,6 +28,8 @@ class ProductPageState extends State<ProductPage> {
   @override
   
   Widget build(BuildContext context) {
+    
+    
 
     return const BackgroundWrapper(
       child: Scaffold(

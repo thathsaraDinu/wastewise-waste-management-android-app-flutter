@@ -31,10 +31,14 @@ class Productcard extends StatelessWidget {
                   topLeft: Radius.circular(20.0),
                   topRight: Radius.circular(20.0),
                 ),
-                child: Image.asset(
-                  height: constraints.maxHeight * 0.5,
-                  fit: BoxFit.cover,
-                  'assets/images/pexels-rdne-8903617.jpg',
+                child: Hero(
+                  tag: 'productimage${item['image'][0]}',
+                  child: Image.asset(
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight * 0.5,
+                    fit: BoxFit.cover,
+                    'assets/images/${item['image'][0]}',
+                  ),
                 ),
               ),
               Padding(
@@ -43,15 +47,21 @@ class Productcard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        item['name'],
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
+                      Hero(
+                        tag: 'productname${item['name']}',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Text(
+                            item['name'],
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, // Handle overflow
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis, // Handle overflow
                       ),
                       const SizedBox(height: 5),
                       Text(

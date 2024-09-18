@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/models/dummy_colors_product_images.dart';
 
 class ProductImages extends StatefulWidget {
   const ProductImages({
@@ -32,9 +31,9 @@ class _ProductImagesState extends State<ProductImages> {
 
     // Re-enable the button after the animation
     Future.delayed(const Duration(milliseconds: 550), () {
-       if (num == 1)
-        itemno++;
-      else if (itemno > 0) itemno--;
+       if (num == 1) {
+         itemno++;
+       } else if (itemno > 0) itemno--;
       if (mounted) {
         setState(() {
           _isButtonEnabled = true;
@@ -51,6 +50,9 @@ class _ProductImagesState extends State<ProductImages> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> item =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Stack(
@@ -59,16 +61,21 @@ class _ProductImagesState extends State<ProductImages> {
           physics: const NeverScrollableScrollPhysics(),
           controller: _scrollController,
           itemBuilder: (context, index) {
-            Color color = colors[index % colors.length];
-            return Container(
+            return SizedBox(
               width: screenWidth,
-              decoration: BoxDecoration(
-                color: color,
+              height: 300,
+              child: Hero(
+                tag: 'productimage${item['image'][index]}',
+                child: Image.asset(
+                  'assets/images/${item['image'][index]}',
+                  fit: BoxFit.cover,
+                ),
               ),
+              
             );
           },
           scrollDirection: Axis.horizontal,
-          itemCount: 10,
+          itemCount: item['image'].length,
         ),
         if (itemno != 0)
           Positioned(
@@ -91,7 +98,7 @@ class _ProductImagesState extends State<ProductImages> {
               ),
             ),
           ),
-        if(itemno != colors.length -1) Positioned(
+        if(itemno != item['image'].length -1 ) Positioned(
           bottom: 130.0,
           right: 20.0,
           child: SizedBox(

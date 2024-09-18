@@ -20,10 +20,10 @@ class ProductType extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const CircleAvatar(
+             CircleAvatar(
               radius: 33.0, // Adjust size accordingly
               backgroundImage:
-                  AssetImage('assets/images/unsplash_OYYE4g-I5ZQ.png'),
+                  AssetImage('assets/images/${item['image']}'), // Load image
             ),
             Text(
               item['type'],
