@@ -1,0 +1,30 @@
+name: user_repository
+description: "repo that handles users"
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none"
+version: 0.0.1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  firebase_auth: ^5.2.1
+  cloud_firestore: ^5.4.1
+  rxdart: ^0.28.0
+  path: ^1.8.0
+  firebase_storage: ^12.3.0
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  provider: ^6.0.5
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

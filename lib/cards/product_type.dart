@@ -8,7 +8,7 @@ class ProductType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 80,
+        width: 60,
         padding: const EdgeInsets.all(0.0),
         margin: const EdgeInsets.only(
           top: 5,
@@ -20,10 +20,10 @@ class ProductType extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 33.0, // Adjust size accordingly
               backgroundImage:
-                  AssetImage('assets/images/pexels-pavel-danilyuk-6461513.jpg'),
+                  AssetImage('assets/images/${item['image']}'), // Load image
             ),
             Text(
               item['type'],

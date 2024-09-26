@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "951086348501",
+    "project_id": "wastewise-7b983",
+    "storage_bucket": "wastewise-7b983.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951086348501:android:d823304e80cdae16ef8a5c",
+        "android_client_info": {
+          "package_name": "com.example.shoppingapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlGabbjamaECTAvmBO_UPHDKFUwzXSeiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

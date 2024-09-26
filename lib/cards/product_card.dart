@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:products_repository/products_repository.dart';
 
 class Productcard extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final ProductModel item;
 
   const Productcard({super.key, required this.item});
 
@@ -20,7 +21,6 @@ class Productcard extends StatelessWidget {
           onTap: () {
             FocusScope.of(context).unfocus();
             Navigator.pushNamed(context, '/productpage', arguments: item);
-            
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,10 +30,14 @@ class Productcard extends StatelessWidget {
                   topLeft: Radius.circular(20.0),
                   topRight: Radius.circular(20.0),
                 ),
-                child: Image.asset(
-                  height: constraints.maxHeight * 0.5,
-                  fit: BoxFit.cover,
-                  'assets/images/pexels-rdne-8903617.jpg',
+                child: Hero(
+                  tag: 'productimage${item.imageUrls[0]}',
+                  child: Image(
+                    image: NetworkImage(item.imageUrls[0]),
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight * 0.5,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Padding(
@@ -42,19 +46,22 @@ class Productcard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        item['name'],
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
+                      Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          item.name,
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis, // Handle overflow
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis, // Handle overflow
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        item['description'],
+                        item.description,
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -65,7 +72,7 @@ class Productcard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '${item['price']} LKR',
+                        '${item.price} LKR',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
@@ -76,7 +83,7 @@ class Productcard extends StatelessWidget {
                       Row(
                         children: [
                           RatingStars(
-                            value: item['rating'],
+                            value: item.rating,
                             starBuilder: (index, color) => Icon(
                               size: 16,
                               Icons.star,
@@ -94,7 +101,7 @@ class Productcard extends StatelessWidget {
                             starColor: const Color.fromARGB(255, 255, 230, 0),
                           ),
                           const SizedBox(width: 5),
-                          Text('${item['ratingCount']}')
+                          Text('${item.ratingCount}')
                         ],
                       ),
                     ],

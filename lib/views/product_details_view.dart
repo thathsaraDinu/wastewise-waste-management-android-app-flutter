@@ -1,5 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:products_repository/products_repository.dart';
+import 'package:provider/provider.dart';
+import 'package:shoppingapp/controller/firestore_provider.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
@@ -10,13 +15,32 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   int itemAmount = 1;
-  Color? selectedColor;
+  Color selectedColor = Colors.transparent;
+  int colorSelect = 0;
+  bool isSnackBarActive = false;
+
+  Future<void> addToCart(
+      ProductModel item, String userid, FirebaseCartRepo cart) async {
+    await cart
+        .addCartItem(userid, selectedColor, itemAmount, item.id, item.price,
+            item.name, item.imageUrls[0], item.price)
+        .then((value) =>
+            showSnackBar(context, 'Item added to cart!', Colors.black))
+        .catchError((e) => {
+              if (kDebugMode) {print(e)},
+              showSnackBar(context, 'Please Check the Connection!', Colors.red)
+            });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> item =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final cart = Provider.of<FirebaseCartRepo>(context, listen: false);
+    final user = Provider.of<FirebaseUserRepo>(context, listen: false);
 
-    final List<Color> colors = List<Color>.from(item['colors']);
+    String userid = user.currentUser!.uid;
+
+    final ProductModel item =
+        ModalRoute.of(context)!.settings.arguments as ProductModel;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -26,11 +50,15 @@ class _ProductDetailsState extends State<ProductDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item['name'],
-                style: const TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
+              Material(
+                color: Colors.transparent,
+                child: Text(
+                  item.name,
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -40,7 +68,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             height: 10.0,
           ),
           Text(
-            '${item['price']} LKR',
+            '${item.price} LKR',
             style: const TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
@@ -54,7 +82,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             height: 10.0,
           ),
           Text(
-            item['longDescription'],
+            item.longDescription,
             style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
@@ -63,9 +91,8 @@ class _ProductDetailsState extends State<ProductDetails> {
           const SizedBox(
             height: 10.0,
           ),
-          sizeselectarea(),
-          colorselectarea(colors), //color select
-          buybuttons(),
+          colorselectarea(item.colors),
+          buybuttons(item, userid, cart),
         ],
       ),
     );
@@ -88,33 +115,38 @@ class _ProductDetailsState extends State<ProductDetails> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: colors.map((color) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedColor = color;
-                          });
-                        },
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                            color: color,
-                            border: Border.all(
-                              color: color == selectedColor
-                                  ? lightenColor(color)
-                                  : Colors.white,
-                              width: 3,
+                SizedBox(
+                  height: 40,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: colors.map((color) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColor = color;
+
+                              colorSelect = 2;
+                            });
+                          },
+                          child: Container(
+                            height: color == selectedColor ? 35 : 30,
+                            width: color == selectedColor ? 35 : 30,
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                              color: color,
+                              border: Border.all(
+                                color: color == selectedColor
+                                    ? darkenColor(color)
+                                    : Colors.black38,
+                                width: color == selectedColor ? 3 : 1,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ],
@@ -129,12 +161,18 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  Color lightenColor(Color color, [double amount = 0.3]) {
-    assert(amount >= 0 && amount <= 1, 'Amount should be between 0 and 1');
-    int r = (color.red + (255 - color.red) * amount).toInt();
-    int g = (color.green + (255 - color.green) * amount).toInt();
-    int b = (color.blue + (255 - color.blue) * amount).toInt();
-    return Color.fromARGB(color.alpha, r, g, b);
+  Color darkenColor(Color color, [double factor = 0.3]) {
+    assert(factor >= 0 && factor <= 1, 'Factor should be between 0 and 1');
+
+    // Convert the color to HSL (Hue, Saturation, Lightness)
+    final hslColor = HSLColor.fromColor(color);
+
+    // Darken the color by reducing the lightness
+    final darkenedHsl =
+        hslColor.withLightness((hslColor.lightness - factor).clamp(0.0, 1.0));
+
+    // Return the color with reduced lightness, which makes it appear darker
+    return darkenedHsl.toColor();
   }
 
   Column sizeselectarea() {
@@ -204,13 +242,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                 });
               }
             },
-            child: amountbuttons('remove'),
+            child: amountbuttons(Icons.remove),
           ),
           const SizedBox(
             width: 15.0,
           ),
           SizedBox(
-            width: 30,
+            width: 25,
             child: Text(
               maxLines: 1,
               textAlign: TextAlign.center,
@@ -232,24 +270,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                 itemAmount++;
               });
             },
-            child: amountbuttons('add'),
+            child: amountbuttons(Icons.add),
           ),
         ],
       ),
     );
   }
 
-  Container amountbuttons(String name) {
-    IconData icon;
-    // Determine the icon based on the name
-    if (name == 'add') {
-      icon = Icons.add;
-    } else if (name == 'remove') {
-      icon = Icons.remove;
-    } else {
-      throw Exception(
-          'Invalid icon name'); // Handle cases where the name isn't "add" or "remove"
-    }
+  Container amountbuttons(IconData icon) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -266,7 +294,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  Column buybuttons() {
+  Column buybuttons(ProductModel item, String userid, FirebaseCartRepo cart) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -277,7 +305,15 @@ class _ProductDetailsState extends State<ProductDetails> {
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
           ),
-          onPressed: () {},
+          onPressed: isSnackBarActive
+              ? null // Disable button while SnackBar is active
+              : () async {
+                  if (selectedColor == Colors.transparent) {
+                    showSnackBar(context, 'Please select a color!', Colors.red);
+                  } else {
+                    await _addToCart(item, userid, cart, context);
+                  }
+                },
           child: const Text('Add to Cart', style: TextStyle(fontSize: 18.0)),
         ),
         const SizedBox(
@@ -297,26 +333,95 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  RatingStars ratingstars(Map<String, dynamic> item) {
-    return RatingStars(
-      value: item['rating'],
-      starBuilder: (index, color) => Icon(
-        size: 25,
-        Icons.star,
-        color: color,
-      ),
-      starCount: 5,
-      starSize: 25,
-      maxValue: 5,
-      starSpacing: 1,
-      maxValueVisibility: true,
-      valueLabelVisibility: true,
-      valueLabelColor: const Color.fromARGB(255, 113, 113, 113),
-      animationDuration: const Duration(milliseconds: 1000),
-      valueLabelPadding: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-      valueLabelMargin: const EdgeInsets.only(right: 8),
-      starOffColor: const Color(0xffe7e8ea),
-      starColor: const Color.fromARGB(255, 255, 230, 0),
+  Future<void> _addToCart(ProductModel item, String userid,
+      FirebaseCartRepo cart, BuildContext context) async {
+    final firestoreProvider =
+        Provider.of<FirestoreProvider>(context, listen: false);
+    try {
+      await firestoreProvider.performFirestoreOperation(() async {
+        await cart.addCartItem(userid, selectedColor, itemAmount, item.id,
+            item.price, item.name, item.imageUrls[0], item.price);
+        showSnackBar(context, 'Item added to cart!', Colors.black);
+      }, context);
+    } catch (e) {
+      showSnackBar(context, 'Error Adding Item!', Colors.red);
+    }
+  }
+
+  void showSnackBar(BuildContext context, String message, Color bgColor) {
+    setState(() {
+      isSnackBarActive = true; // Disable button
+    });
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+          SnackBar(
+            elevation: 0,
+            content: Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: Text(
+                textAlign: TextAlign.center,
+                message,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: bgColor.withOpacity(0.75), // 50% transparency
+            behavior: SnackBarBehavior.floating,
+
+            margin: const EdgeInsets.only(bottom: 400, right: 70, left: 70),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onVisible: () {}, // Optional callback when visible
+          ),
+        )
+        .closed
+        .then((_) {
+      setState(() {
+        isSnackBarActive = false; // Re-enable button
+      });
+    });
+  }
+
+  Row ratingstars(ProductModel item) {
+    return Row(
+      children: [
+        RatingStars(
+          value: item.rating,
+          starBuilder: (index, color) => Icon(
+            size: 22,
+            Icons.star,
+            color: color,
+          ),
+          starCount: 5,
+          starSize: 22,
+          maxValue: 5,
+          starSpacing: 1,
+          maxValueVisibility: true,
+          valueLabelVisibility: true,
+          valueLabelColor: const Color.fromARGB(255, 113, 113, 113),
+          animationDuration: const Duration(milliseconds: 1000),
+          valueLabelPadding:
+              const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+          valueLabelMargin: const EdgeInsets.only(right: 8),
+          starOffColor: const Color(0xffe7e8ea),
+          starColor: const Color.fromARGB(255, 255, 230, 0),
+        ),
+        const SizedBox(
+          width: 10.0,
+        ),
+        Text(
+          '${item.ratingCount} reviews',
+          style: const TextStyle(
+            fontSize: 16.0,
+            color: Colors.blue,
+            fontWeight: FontWeight.w500,
+          ),
+        )
+      ],
     );
   }
 }

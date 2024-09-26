@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:products_repository/products_repository.dart';
 import 'package:shoppingapp/cards/product_card.dart';
-import 'package:shoppingapp/models/dummy_data_products.dart';
 
-GridView productslistgrid() {
+GridView productslistgrid(List<ProductModel> items) {
   return GridView.builder(
     shrinkWrap: true,
     physics: const NeverScrollableScrollPhysics(), // Disable internal scrolling
@@ -14,9 +14,9 @@ GridView productslistgrid() {
     ),
     itemCount: items.length,
     itemBuilder: (BuildContext context, int index) {
+      ProductModel product = items[index];
       return Productcard(
-        item: items[index],
-        
+        item: product,
       );
     },
   );
