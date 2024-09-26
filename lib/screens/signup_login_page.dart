@@ -16,11 +16,16 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLogin = true;
+  bool _isLoading = false;
   String? _errorMessage;
 
   Future<void> _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
+        setState(() {
+          _isLoading = true;
+          _errorMessage = null;
+        });
         final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
         if (isLogin) {
           await userRepo.signInWithEmailAndPassword(
@@ -40,6 +45,12 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
         Navigator.pushReplacementNamed(context, '/'); // Adjust route as needed
       } catch (e) {
         setState(() => _errorMessage = e.toString());
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -49,33 +60,42 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
     return BackgroundWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 30),
+                Image.asset(
+                  'assets/images/waste-wise-high-resolution-logo-transparent.png',
+                  height: 100,
+                ),
+                const SizedBox(height: 30),
                 Text(
                   isLogin ? 'Login' : 'Sign Up',
                   style: const TextStyle(
-                      fontSize: 28, fontWeight: FontWeight.bold),
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 if (_errorMessage != null)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
                       _errorMessage!,
                       style: const TextStyle(
                           color: Colors.redAccent, fontSize: 16),
                     ),
+                  )
+                else
+                  const SizedBox(
+                    height: 10,
                   ),
                 Center(
                   child: Card(
                     elevation: 8,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
-                    margin: const EdgeInsets.only(top: 40.0),
+                    margin: const EdgeInsets.only(top: 15.0),
                     color: Colors.white.withOpacity(0.9),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -84,8 +104,6 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                         child: Column(
                           children: [
                             TextFormField(
-                                                        
-
                               controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: 'Email',
@@ -114,8 +132,6 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                             if (!isLogin) ...[
                               const SizedBox(height: 16),
                               TextFormField(
-                                                     
-
                                 controller: _nameController,
                                 decoration: InputDecoration(
                                   labelText: 'Name',
@@ -166,22 +182,33 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton(
-                              onPressed: _submit,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurpleAccent,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 16.0, horizontal: 80.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                elevation: 5,
-                              ),
-                              child: Text(
-                                isLogin ? 'Login' : 'Sign Up',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                                onPressed: _submit,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepPurpleAccent,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0, horizontal: 80.0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  elevation: 5,
+                                ),
+                                child: _isLoading != true
+                                    ? Text(
+                                        isLogin ? 'Login' : 'Sign Up',
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : const SizedBox(
+                                        width: 25.0, // adjust width as needed
+                                        height: 25.0, // adjust height as needed
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                          color: Colors.white,
+                                        ),
+                                      )),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -193,7 +220,7 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                                   style: const TextStyle(
                                       fontSize: 16, color: Colors.black54),
                                 ),
-                                 TextButton(
+                                TextButton(
                                   onPressed: () {
                                     setState(() {
                                       _errorMessage = null;
@@ -214,7 +241,6 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                                 ),
                               ],
                             ),
-                           
                           ],
                         ),
                       ),

@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:products_repository/products_repository.dart';
+import 'package:shoppingapp/controller/dependency_injection.dart';
 import 'package:shoppingapp/views/product_cards_grid.dart';
 import 'package:shoppingapp/views/product_types_list.dart';
 import 'package:shoppingapp/common/custom_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class RecycledItems extends StatefulWidget {
   const RecycledItems({super.key});
@@ -13,14 +17,42 @@ class RecycledItems extends StatefulWidget {
 class RecycledItemsState extends State<RecycledItems> {
   final FocusNode _focusNode = FocusNode();
   int selectedIndex = 0;
+  List<ProductModel> _products = [];
+  bool isLoading = false;
+  int sortingType = 0;
 
   @override
   void initState() {
     super.initState();
+    _fetchProducts();
+    DependencyInjection.init();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Ensure the TextField is unfocused when the widget is first built
       WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
     });
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final productService =
+          Provider.of<ProductService>(context, listen: false);
+      final products = await productService.getAllProducts(sortingType);
+      setState(() {
+        _products = products;
+        isLoading = false;
+      });
+    } on Exception catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
   }
 
   @override
@@ -89,22 +121,101 @@ class RecycledItemsState extends State<RecycledItems> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5.0, horizontal: 10.0),
-                        child: const Row(
-                          children: [
-                            Text('Sort'),
-                            SizedBox(width: 5),
-                            Icon(
-                              Icons.sort,
-                              size: 20.0,
-                            )
-                          ],
+                      Material(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        color: Colors.white,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(10.0),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Sort By'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        selected:
+                                            sortingType == 0 ? true : false,
+                                        selectedColor: Colors.green[800],
+                                        title: const Text('Name: A to Z'),
+                                        onTap: () {
+                                          setState(() {
+                                            sortingType = 0;
+                                          });
+                                          _fetchProducts();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      ListTile(
+                                        selected:
+                                            sortingType == 2 ? true : false,
+                                        selectedColor: Colors.green[800],
+                                        title: const Text('Name: Z to A'),
+                                        onTap: () {
+                                          setState(() {
+                                            sortingType = 2;
+                                          });
+                                          _fetchProducts();
+
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      ListTile(
+                                        selected:
+                                            sortingType == 3 ? true : false,
+                                        selectedColor: Colors.green[800],
+                                        title: const Text('Price: Low to High'),
+                                        onTap: () {
+                                          setState(() {
+                                            sortingType = 3;
+                                          });
+                                          _fetchProducts();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      ListTile(
+                                        selected:
+                                            sortingType == 4 ? true : false,
+                                        selectedColor: Colors.green[800],
+                                        title: const Text('Price: High to Low'),
+                                        onTap: () {
+                                          setState(() {
+                                            sortingType = 4;
+                                          });
+                                          _fetchProducts();
+
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0))),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5.0, horizontal: 10.0),
+                            child: const Row(
+                              children: [
+                                Text('Sort'),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.sort,
+                                  size: 20.0,
+                                )
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -112,7 +223,12 @@ class RecycledItemsState extends State<RecycledItems> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: productslistgrid(),
+                  child: isLoading
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : productslistgrid(_products),
                 ),
               ],
             ),

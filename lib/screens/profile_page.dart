@@ -15,12 +15,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _signOut(userRepo) async {
     try {
       await userRepo.signOut();
-      Navigator.pushNamedAndRemoveUntil(context, '/signupandlogin', (routes) => false);
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/signupandlogin', (routes) => false);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sign-out failed: ${e.toString()}')),
       );
-      print('Sign-out failed: ${e.toString()}');
     }
   }
 
@@ -36,12 +36,12 @@ class _ProfilePageState extends State<ProfilePage> {
             stream: userRepo.user,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Show loading indicator while waiting
+                return const CircularProgressIndicator(); // Show loading indicator while waiting
               } else if (snapshot.hasError) {
                 return Text(
                     'Error: ${snapshot.error}'); // Show error if there is one
               } else if (!snapshot.hasData) {
-                return Text(
+                return const Text(
                     'No user data available'); // Handle case where there's no data
               }
 

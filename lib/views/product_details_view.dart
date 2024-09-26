@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
-import 'package:shoppingapp/models/cart_model.dart';
+import 'package:products_repository/products_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingapp/controller/firestore_provider.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key});
@@ -13,17 +15,32 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   int itemAmount = 1;
-  Color? selectedColor;
+  Color selectedColor = Colors.transparent;
   int colorSelect = 0;
+  bool isSnackBarActive = false;
+
+  Future<void> addToCart(
+      ProductModel item, String userid, FirebaseCartRepo cart) async {
+    await cart
+        .addCartItem(userid, selectedColor, itemAmount, item.id, item.price,
+            item.name, item.imageUrls[0], item.price)
+        .then((value) =>
+            showSnackBar(context, 'Item added to cart!', Colors.black))
+        .catchError((e) => {
+              if (kDebugMode) {print(e)},
+              showSnackBar(context, 'Please Check the Connection!', Colors.red)
+            });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartModel>(context);
+    final cart = Provider.of<FirebaseCartRepo>(context, listen: false);
+    final user = Provider.of<FirebaseUserRepo>(context, listen: false);
 
-    final Map<String, dynamic> item =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    String userid = user.currentUser!.uid;
 
-    final List<Color> colors = List<Color>.from(item['colors']);
+    final ProductModel item =
+        ModalRoute.of(context)!.settings.arguments as ProductModel;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -33,17 +50,14 @@ class _ProductDetailsState extends State<ProductDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Hero(
-                tag: 'productname${item['name']}',
-                child: Material(
-                  color: Colors.transparent,
-                  child: Text(
-                    item['name'],
-                    style: const TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+              Material(
+                color: Colors.transparent,
+                child: Text(
+                  item.name,
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -54,7 +68,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             height: 10.0,
           ),
           Text(
-            '${item['price']} LKR',
+            '${item.price} LKR',
             style: const TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
@@ -68,7 +82,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             height: 10.0,
           ),
           Text(
-            item['longDescription'],
+            item.longDescription,
             style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
@@ -77,8 +91,8 @@ class _ProductDetailsState extends State<ProductDetails> {
           const SizedBox(
             height: 10.0,
           ),
-          colorselectarea(colors),
-          buybuttons(item, cart),
+          colorselectarea(item.colors),
+          buybuttons(item, userid, cart),
         ],
       ),
     );
@@ -280,7 +294,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  Column buybuttons(Map<String, dynamic> item, cart) {
+  Column buybuttons(ProductModel item, String userid, FirebaseCartRepo cart) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -291,67 +305,15 @@ class _ProductDetailsState extends State<ProductDetails> {
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
           ),
-          onPressed: () {
-            if (selectedColor == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Container(
-                    height: 50, // Adjust the height of the SnackBar
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Please select a color!',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  duration: const Duration(seconds: 2),
-                  backgroundColor:
-                      Colors.red.withOpacity(0.5), // 50% transparency
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height *
-                        0.4, // Center vertically
-                    horizontal: 50, // Center horizontally with some margin
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                ),
-              );
-            } else {
-              cart.addItemToCartWithAmount(item, itemAmount, selectedColor);
-              if (kDebugMode) {
-                print('added');
-              }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Container(
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Item added to cart!',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  duration: const Duration(seconds: 2),
-                  backgroundColor:
-                      Colors.black.withOpacity(0.5), // 50% transparency
-                  behavior: SnackBarBehavior.floating,
-                  margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height *
-                        0.4, // Center vertically
-                    horizontal: 50, // Center horizontally with some margin
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
-            }
-          },
-
+          onPressed: isSnackBarActive
+              ? null // Disable button while SnackBar is active
+              : () async {
+                  if (selectedColor == Colors.transparent) {
+                    showSnackBar(context, 'Please select a color!', Colors.red);
+                  } else {
+                    await _addToCart(item, userid, cart, context);
+                  }
+                },
           child: const Text('Add to Cart', style: TextStyle(fontSize: 18.0)),
         ),
         const SizedBox(
@@ -371,11 +333,64 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  Row ratingstars(Map<String, dynamic> item) {
+  Future<void> _addToCart(ProductModel item, String userid,
+      FirebaseCartRepo cart, BuildContext context) async {
+    final firestoreProvider =
+        Provider.of<FirestoreProvider>(context, listen: false);
+    try {
+      await firestoreProvider.performFirestoreOperation(() async {
+        await cart.addCartItem(userid, selectedColor, itemAmount, item.id,
+            item.price, item.name, item.imageUrls[0], item.price);
+        showSnackBar(context, 'Item added to cart!', Colors.black);
+      }, context);
+    } catch (e) {
+      showSnackBar(context, 'Error Adding Item!', Colors.red);
+    }
+  }
+
+  void showSnackBar(BuildContext context, String message, Color bgColor) {
+    setState(() {
+      isSnackBarActive = true; // Disable button
+    });
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+          SnackBar(
+            elevation: 0,
+            content: Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: Text(
+                textAlign: TextAlign.center,
+                message,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+            duration: const Duration(seconds: 2),
+            backgroundColor: bgColor.withOpacity(0.75), // 50% transparency
+            behavior: SnackBarBehavior.floating,
+
+            margin: const EdgeInsets.only(bottom: 400, right: 70, left: 70),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onVisible: () {}, // Optional callback when visible
+          ),
+        )
+        .closed
+        .then((_) {
+      setState(() {
+        isSnackBarActive = false; // Re-enable button
+      });
+    });
+  }
+
+  Row ratingstars(ProductModel item) {
     return Row(
       children: [
         RatingStars(
-          value: item['rating'],
+          value: item.rating,
           starBuilder: (index, color) => Icon(
             size: 22,
             Icons.star,
@@ -399,7 +414,7 @@ class _ProductDetailsState extends State<ProductDetails> {
           width: 10.0,
         ),
         Text(
-          '${item['ratingCount']} reviews',
+          '${item.ratingCount} reviews',
           style: const TextStyle(
             fontSize: 16.0,
             color: Colors.blue,

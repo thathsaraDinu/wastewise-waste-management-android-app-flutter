@@ -1,10 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 import '../entities/user_entity.dart';
 
-class MyUser {
-   String uid;
-   String email;
-   String name;
-   bool hasActiveCart;
+class MyUser extends ChangeNotifier {
+  String uid;
+  String email;
+  String name;
+  bool hasActiveCart;
 
   MyUser({
     required this.uid,
@@ -12,7 +14,7 @@ class MyUser {
     required this.name,
     required this.hasActiveCart,
   });
-  
+
   static final MyUser empty = MyUser(
     uid: '',
     email: '',

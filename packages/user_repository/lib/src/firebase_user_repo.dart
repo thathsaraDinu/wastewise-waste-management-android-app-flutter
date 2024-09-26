@@ -15,7 +15,6 @@ class FirebaseUserRepo extends ChangeNotifier implements UserRepository {
 
   User? get currentUser => _firebaseAuth.currentUser;
 
-
   Future<MyUser> getUser() {
     // TODO: implement getUser
     throw UnimplementedError();
@@ -49,7 +48,6 @@ class FirebaseUserRepo extends ChangeNotifier implements UserRepository {
           email: myuser.email, password: password);
       myuser.uid = user.user!.uid;
 
-
       // Store user details in Firestore
       await usersCollection.doc(myuser.uid).set(myuser.toEntity().toDocument());
       return myuser;
@@ -62,7 +60,6 @@ class FirebaseUserRepo extends ChangeNotifier implements UserRepository {
   Future<void> updateUser(MyUser user) async {
     try {
       await usersCollection.doc(user.uid).update(user.toEntity().toDocument());
-
 
       // Store user details in Firestore
     } on FirebaseAuthException catch (e) {

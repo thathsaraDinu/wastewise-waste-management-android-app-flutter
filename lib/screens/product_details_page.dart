@@ -14,8 +14,6 @@ class ProductPage extends StatefulWidget {
 class ProductPageState extends State<ProductPage> {
   final ScrollController _scrollController = ScrollController();
 
-  
-
   void _scrollToWidth(double width) {
     _scrollController.animateTo(
       width,
@@ -26,34 +24,41 @@ class ProductPageState extends State<ProductPage> {
   }
 
   @override
-  
   Widget build(BuildContext context) {
-    
-    
-
     return const BackgroundWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: CustomAppBar(name: 'Details'),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                 SizedBox(
-                  width: double.infinity,
-                  height: 300,
-                  child: ProductImages(),
+        
+        body: Stack(
+          children: [Positioned.fill(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: 400,
+                      child: ProductImages(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ProductDetails(),
+                  ],
                 ),
-                 SizedBox(
-                  height: 10,
-                ),
-                ProductDetails(),
-              ],
+              ),
             ),
           ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 80,
+            child: CustomAppBar(name: 'Details'),
+          )]
         ),
       ),
     );

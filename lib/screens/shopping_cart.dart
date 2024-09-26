@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shoppingapp/common/background_image.dart';
 import 'package:shoppingapp/common/custom_app_bar.dart';
-import 'package:shoppingapp/models/cart_model.dart';
 import 'package:shoppingapp/views/shopping_cart_view.dart';
 import 'package:provider/provider.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ShoppingCart extends StatefulWidget {
   const ShoppingCart({super.key});
@@ -15,11 +15,11 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartModel>(context);
+    final cartItems = Provider.of<FirebaseCartRepo>(context);
+    final user = Provider.of<FirebaseUserRepo>(context);
 
     // Assuming CartModel has a method getTotalAmount
-    final totalAmount = cart.getTotalPrice;
-
+    Stream<List<CartItem>> cart = cartItems.getCartItems(user.currentUser!.uid);
     return BackgroundWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -32,42 +32,83 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 child: shoppingcartview(cart), // Your cart view widget
               ),
               // Display total amount
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Total Amount',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+              StreamBuilder<double>(
+                  stream: cartItems.getTotalPrice(user.currentUser!.uid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('0.0'));
+                    }
+                    if (!snapshot.hasData) {
+                      return const Center(
+                          child: Text('Total amount not available'));
+                    }
+                    final totalAmount = snapshot.data!;
+                    return Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, -5),
+                          ),
+                        ],
                       ),
-                    ),
-                    Text(
-                      '$totalAmount LKR', // Assuming the totalAmount is a double
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[700],
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Total Amount',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                '$totalAmount LKR', // Assuming the totalAmount is a double
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15.0),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Proceed to checkout
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green[700],
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 12.0),
+                              elevation: 5.0,
+                            ),
+                            child: const Text(
+                              'Proceed to checkout',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    );
+                  }),
             ],
           ),
         ),

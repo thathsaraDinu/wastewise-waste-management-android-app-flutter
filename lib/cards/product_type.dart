@@ -20,7 +20,7 @@ class ProductType extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             CircleAvatar(
+            CircleAvatar(
               radius: 33.0, // Adjust size accordingly
               backgroundImage:
                   AssetImage('assets/images/${item['image']}'), // Load image

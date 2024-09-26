@@ -1,5 +1,5 @@
-name: user_repository
-description: "repo that handles users"
+name: products_repository
+description: "repo that handles products"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none"
@@ -18,7 +18,6 @@ dependencies:
   rxdart: ^0.28.0
   path: ^1.8.0
   firebase_storage: ^12.3.0
-  
 
 dev_dependencies:
   flutter_test:

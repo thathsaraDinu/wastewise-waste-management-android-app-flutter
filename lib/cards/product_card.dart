@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:products_repository/products_repository.dart';
 
 class Productcard extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final ProductModel item;
 
   const Productcard({super.key, required this.item});
 
-  
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -21,7 +21,6 @@ class Productcard extends StatelessWidget {
           onTap: () {
             FocusScope.of(context).unfocus();
             Navigator.pushNamed(context, '/productpage', arguments: item);
-            
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,12 +31,12 @@ class Productcard extends StatelessWidget {
                   topRight: Radius.circular(20.0),
                 ),
                 child: Hero(
-                  tag: 'productimage${item['image'][0]}',
-                  child: Image.asset(
+                  tag: 'productimage${item.imageUrls[0]}',
+                  child: Image(
+                    image: NetworkImage(item.imageUrls[0]),
                     width: constraints.maxWidth,
                     height: constraints.maxHeight * 0.5,
                     fit: BoxFit.cover,
-                    'assets/images/${item['image'][0]}',
                   ),
                 ),
               ),
@@ -47,25 +46,22 @@ class Productcard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
-                        tag: 'productname${item['name']}',
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Text(
-                            item['name'],
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis, // Handle overflow
+                      Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          item.name,
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis, // Handle overflow
                         ),
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        item['description'],
+                        item.description,
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -76,7 +72,7 @@ class Productcard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '${item['price']} LKR',
+                        '${item.price} LKR',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
@@ -87,7 +83,7 @@ class Productcard extends StatelessWidget {
                       Row(
                         children: [
                           RatingStars(
-                            value: item['rating'],
+                            value: item.rating,
                             starBuilder: (index, color) => Icon(
                               size: 16,
                               Icons.star,
@@ -105,7 +101,7 @@ class Productcard extends StatelessWidget {
                             starColor: const Color.fromARGB(255, 255, 230, 0),
                           ),
                           const SizedBox(width: 5),
-                          Text('${item['ratingCount']}')
+                          Text('${item.ratingCount}')
                         ],
                       ),
                     ],

@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shoppingapp/models/cart_model.dart';
+import 'package:get/get.dart';
+import 'package:products_repository/products_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingapp/controller/firestore_provider.dart';
 import 'package:shoppingapp/routes/routes.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -27,6 +29,9 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => FirestoreProvider(),
+        ),
         ChangeNotifierProvider<FirebaseUserRepo>(
           create: (context) => FirebaseUserRepo(),
         ),
@@ -35,7 +40,10 @@ Future<void> main() async {
               Provider.of<FirebaseUserRepo>(context, listen: false).user,
           initialData: MyUser.empty, // Default value if no user is logged in
         ),
-        ChangeNotifierProvider(create: (_) => CartModel()),
+        ChangeNotifierProvider(create: (_) => ProductService()),
+        ChangeNotifierProvider(
+          create: (_) => FirebaseCartRepo(),
+        )
       ],
       child: const MyApp(),
     ),
@@ -47,7 +55,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       routes: AppRoutes.getRoutes(),
       initialRoute: '/',
       title: 'WasteWise',

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:products_repository/products_repository.dart';
 
 class ProductImages extends StatefulWidget {
   const ProductImages({
-    super.key, 
+    super.key,
   });
 
   @override
@@ -20,7 +21,6 @@ class _ProductImagesState extends State<ProductImages> {
     setState(() {
       _isButtonEnabled = false;
     });
-   
 
     // Scroll by screen width
     _scrollController.animateTo(
@@ -31,9 +31,9 @@ class _ProductImagesState extends State<ProductImages> {
 
     // Re-enable the button after the animation
     Future.delayed(const Duration(milliseconds: 550), () {
-       if (num == 1) {
-         itemno++;
-       } else if (itemno > 0) itemno--;
+      if (num == 1) {
+        itemno++;
+      } else if (itemno > 0) itemno--;
       if (mounted) {
         setState(() {
           _isButtonEnabled = true;
@@ -50,8 +50,8 @@ class _ProductImagesState extends State<ProductImages> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> item =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final ProductModel item =
+        ModalRoute.of(context)!.settings.arguments as ProductModel;
 
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -63,19 +63,18 @@ class _ProductImagesState extends State<ProductImages> {
           itemBuilder: (context, index) {
             return SizedBox(
               width: screenWidth,
-              height: 300,
+              height: 350,
               child: Hero(
-                tag: 'productimage${item['image'][index]}',
-                child: Image.asset(
-                  'assets/images/${item['image'][index]}',
+                tag: 'productimage${item.imageUrls[index]}',
+                child: Image(
+                  image: NetworkImage(item.imageUrls[index]),
                   fit: BoxFit.cover,
                 ),
               ),
-              
             );
           },
           scrollDirection: Axis.horizontal,
-          itemCount: item['image'].length,
+          itemCount: item.imageUrls.length,
         ),
         if (itemno != 0)
           Positioned(
@@ -85,7 +84,8 @@ class _ProductImagesState extends State<ProductImages> {
               height: 40,
               width: 40,
               child: FloatingActionButton(
-                key: const ValueKey('left_button'),  // Unique key for left button
+                key:
+                    const ValueKey('left_button'), // Unique key for left button
                 splashColor: Colors.white,
                 backgroundColor: const Color.fromARGB(150, 255, 255, 255),
                 shape: RoundedRectangleBorder(
@@ -98,26 +98,28 @@ class _ProductImagesState extends State<ProductImages> {
               ),
             ),
           ),
-        if(itemno != item['image'].length -1 ) Positioned(
-          bottom: 130.0,
-          right: 20.0,
-          child: SizedBox(
-            height: 40,
-            width: 40,
-            child: FloatingActionButton(
-              key: const ValueKey('right_button'),  // Unique key for right button
-              splashColor: Colors.white,
-              backgroundColor: const Color.fromARGB(150, 255, 255, 255),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
+        if (itemno != item.imageUrls.length - 1)
+          Positioned(
+            bottom: 130.0,
+            right: 20.0,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FloatingActionButton(
+                key: const ValueKey(
+                    'right_button'), // Unique key for right button
+                splashColor: Colors.white,
+                backgroundColor: const Color.fromARGB(150, 255, 255, 255),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                onPressed: () {
+                  _onButtonPressed(screenWidth, 1);
+                },
+                child: const Icon(Icons.navigate_next),
               ),
-              onPressed: () {
-                _onButtonPressed(screenWidth, 1);
-              },
-              child: const Icon(Icons.navigate_next),
             ),
           ),
-        ),
       ],
     );
   }
