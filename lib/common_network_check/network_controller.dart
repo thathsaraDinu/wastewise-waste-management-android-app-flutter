@@ -11,34 +11,34 @@ class NetworkController extends GetxController {
     _connectivity.onConnectivityChanged.listen(_updateConnectionStatusbyDialog);
   }
 
-  void _updateConnectionStatus(List<ConnectivityResult> connectivityResult) {
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      Get.rawSnackbar(
-        messageText: const Center(
-          child: Text(
-            'No Internet Connection',
-            style: TextStyle(color: Colors.white, fontSize: 14),
-          ),
-        ),
-        isDismissible: false,
-        animationDuration: const Duration(milliseconds: 200),
-        duration: const Duration(days: 1),
-        backgroundColor: Colors.red,
-        icon: const Icon(Icons.error_outline, color: Colors.white),
-        margin: const EdgeInsets.symmetric(
-            horizontal: 90, vertical: 80), // Shortens the width
-        padding: const EdgeInsets.all(
-            16), // Adds padding to make the content more compact
-        snackStyle:
-            SnackStyle.FLOATING, // Makes the snackbar float above the UI
-        borderRadius: 10, // Add some styling to make it more visually distinct
-      );
-    } else {
-      if (Get.isSnackbarOpen) {
-        Get.closeCurrentSnackbar();
-      }
-    }
-  }
+  // void _updateConnectionStatusBySnackBar(List<ConnectivityResult> connectivityResult) {
+  //   if (connectivityResult.contains(ConnectivityResult.none)) {
+  //     Get.rawSnackbar(
+  //       messageText: const Center(
+  //         child: Text(
+  //           'No Internet Connection',
+  //           style: TextStyle(color: Colors.white, fontSize: 14),
+  //         ),
+  //       ),
+  //       isDismissible: false,
+  //       animationDuration: const Duration(milliseconds: 200),
+  //       duration: const Duration(days: 1),
+  //       backgroundColor: Colors.red,
+  //       icon: const Icon(Icons.error_outline, color: Colors.white),
+  //       margin: const EdgeInsets.symmetric(
+  //           horizontal: 90, vertical: 80), // Shortens the width
+  //       padding: const EdgeInsets.all(
+  //           16), // Adds padding to make the content more compact
+  //       snackStyle:
+  //           SnackStyle.FLOATING, // Makes the snackbar float above the UI
+  //       borderRadius: 10, // Add some styling to make it more visually distinct
+  //     );
+  //   } else {
+  //     if (Get.isSnackbarOpen) {
+  //       Get.closeCurrentSnackbar();
+  //     }
+  //   }
+  // }
 
   void _updateConnectionStatusbyDialog(
       List<ConnectivityResult> connectivityResult) {

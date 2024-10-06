@@ -15,12 +15,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _signOut(userRepo) async {
     try {
       await userRepo.signOut();
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/signupandlogin', (routes) => false);
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/signupandlogin', (routes) => false);
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign-out failed: ${e.toString()}')),
-      );
+      if(mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign-out failed: ${e.toString()}')),
+        );
+      }
+      
     }
   }
 

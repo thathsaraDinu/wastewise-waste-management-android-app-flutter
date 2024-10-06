@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common/background_image.dart';
-import 'package:shoppingapp/common/custom_app_bar.dart';
-import 'package:shoppingapp/views/shopping_cart_view.dart';
+import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
+import 'package:shoppingapp/common_widgets/custom_app_bar.dart';
+import 'package:shoppingapp/ui/cards/shopping_cart_card.dart';
 import 'package:provider/provider.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -20,7 +20,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
     // Assuming CartModel has a method getTotalAmount
     Stream<List<CartItem>> cart = cartItems.getCartItems(user.currentUser!.uid);
-    return BackgroundWrapper(
+    return BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: const CustomAppBar(name: 'Shopping cart'),
@@ -29,7 +29,35 @@ class _ShoppingCartState extends State<ShoppingCart> {
           child: Column(
             children: [
               Expanded(
-                child: shoppingcartview(cart), // Your cart view widget
+                child: StreamBuilder<List<CartItem>>(
+                  stream: cart,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('An Error occured'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('Your cart is empty.'));
+                    }
+
+                    final cartItems = snapshot.data!;
+                    // Log cartItems length to ensure it's correct
+
+                    return ListView.builder(
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        // Log the current index to ensure it is valid
+
+                        // Ensure index is within valid range
+
+                        final cartItem = cartItems[index];
+                        return ShoppingCartCard(cartItem: cartItem);
+                      },
+                    );
+                  },
+                ), // Your cart view widget
               ),
               // Display total amount
               StreamBuilder<double>(

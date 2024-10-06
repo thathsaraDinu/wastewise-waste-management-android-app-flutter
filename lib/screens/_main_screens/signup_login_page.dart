@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common/background_image.dart';
+import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +57,7 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BackgroundWrapper(
+    return BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(

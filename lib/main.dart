@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:products_repository/products_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingapp/controller/firestore_provider.dart';
+import 'package:shoppingapp/common_network_check/firestore_provider.dart';
 import 'package:shoppingapp/routes/routes.dart';
 import 'package:user_repository/user_repository.dart';
 
