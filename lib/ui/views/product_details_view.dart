@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:products_repository/products_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingapp/common_widgets/custom_snackbar.dart';
-import 'package:shoppingapp/common_network_check/firestore_provider.dart';
+import 'package:waste_wise/common_widgets/custom_snackbar.dart';
+import 'package:waste_wise/common_network_check/firestore_provider.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ProductDetails extends StatefulWidget {

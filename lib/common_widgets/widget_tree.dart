@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
-import 'package:shoppingapp/common_widgets/login_checker.dart';
+import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/common_widgets/login_checker.dart';
 
 class WidgetTree extends StatefulWidget {
   const WidgetTree({super.key});

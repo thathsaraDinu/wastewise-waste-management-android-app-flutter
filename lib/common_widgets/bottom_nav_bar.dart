@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
-import 'package:shoppingapp/screens/_main_screens/profile_page.dart';
-import 'package:shoppingapp/screens/_main_screens/recycled_items_main.dart';
+import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/screens/_main_screens/profile_page.dart';
+import 'package:waste_wise/screens/_main_screens/recycled_items_main.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});

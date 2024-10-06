@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
-import 'package:shoppingapp/common_widgets/custom_snackbar.dart';
+import 'package:waste_wise/common_widgets/custom_snackbar.dart';
 
 class FirestoreProvider with ChangeNotifier {
   // Function to check internet access with a timeout

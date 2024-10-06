@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common_widgets/custom_app_bar.dart';
-import 'package:shoppingapp/ui/views/product_images_list.dart';
-import 'package:shoppingapp/ui/views/product_details_view.dart';
-import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/common_widgets/custom_app_bar.dart';
+import 'package:waste_wise/ui/views/product_images_list.dart';
+import 'package:waste_wise/ui/views/product_details_view.dart';
+import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});

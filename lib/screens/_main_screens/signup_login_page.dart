@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:provider/provider.dart';
 

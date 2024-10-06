@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:products_repository/products_repository.dart';
-import 'package:shoppingapp/ui/cards/product_card.dart';
-import 'package:shoppingapp/ui/cards/product_type_card.dart';
-import 'package:shoppingapp/common_network_check/dependency_injection.dart';
-import 'package:shoppingapp/data/dummy_data_product_type.dart';
-import 'package:shoppingapp/common_widgets/custom_app_bar.dart';
+import 'package:waste_wise/ui/cards/product_card.dart';
+import 'package:waste_wise/ui/cards/product_type_card.dart';
+import 'package:waste_wise/common_network_check/dependency_injection.dart';
+import 'package:waste_wise/data/dummy_data_product_type.dart';
+import 'package:waste_wise/common_widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class RecycledItemsMain extends StatefulWidget {

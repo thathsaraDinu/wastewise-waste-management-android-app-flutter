@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
-import 'package:shoppingapp/common_widgets/custom_app_bar.dart';
-import 'package:shoppingapp/ui/cards/shopping_cart_card.dart';
+import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/common_widgets/custom_app_bar.dart';
+import 'package:waste_wise/ui/cards/shopping_cart_card.dart';
 import 'package:provider/provider.dart';
 import 'package:user_repository/user_repository.dart';
 
