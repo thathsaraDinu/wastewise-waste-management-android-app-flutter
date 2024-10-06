@@ -1,39 +1,85 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:products_repository/products_repository.dart';
-import 'package:shoppingapp/controller/dependency_injection.dart';
-import 'package:shoppingapp/views/product_cards_grid.dart';
-import 'package:shoppingapp/views/product_types_list.dart';
-import 'package:shoppingapp/common/custom_app_bar.dart';
+import 'package:shoppingapp/ui/cards/product_card.dart';
+import 'package:shoppingapp/ui/cards/product_type_card.dart';
+import 'package:shoppingapp/common_network_check/dependency_injection.dart';
+import 'package:shoppingapp/data/dummy_data_product_type.dart';
+import 'package:shoppingapp/common_widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
-class RecycledItems extends StatefulWidget {
-  const RecycledItems({super.key});
-
+class RecycledItemsMain extends StatefulWidget {
+  const RecycledItemsMain({super.key});
   @override
-  State<RecycledItems> createState() => RecycledItemsState();
+  State<RecycledItemsMain> createState() => RecycledItemsMainState();
 }
 
-class RecycledItemsState extends State<RecycledItems> {
+class RecycledItemsMainState extends State<RecycledItemsMain> {
   final FocusNode _focusNode = FocusNode();
   int selectedIndex = 0;
   List<ProductModel> _products = [];
   bool isLoading = false;
-  int sortingType = 0;
+  int sortingType = 1;
+  Timer? _debounce;
+  List<ProductModel> filteredProductsl = [];
+
+  List<ProductModel> filteredProducts = [];
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchProducts();
+    _fetchProductsByType('');
     DependencyInjection.init();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Ensure the TextField is unfocused when the widget is first built
       WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
     });
   }
 
-  Future<void> _fetchProducts() async {
+  void _fetchSearchProducts(String query) {
+    final filteredProductsm = filteredProducts
+        .where((product) =>
+            product.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    setState(() {
+      _products = filteredProductsm;
+      isLoading = false;
+    });
+  }
+
+  void sortProducts() {
+    switch (sortingType) {
+      case 1:
+        _products.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 2:
+        _products.sort((a, b) => b.name.compareTo(a.name));
+        break;
+      case 3:
+        _products.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 4:
+        _products.sort((a, b) => b.price.compareTo(a.price));
+        break;
+    }
+  }
+
+  // Future<void> _fetchFromBack() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   final productService = Provider.of<ProductService>(context, listen: false);
+  //   final products = await productService.getAllProducts(sortingType);
+  //   setState(() {
+  //     _products = filteredProducts;
+  //     isLoading = false;
+  //   });
+  // }
+
+  Future<void> _fetchProductsByType(String query) async {
     try {
       setState(() {
         isLoading = true;
@@ -41,8 +87,12 @@ class RecycledItemsState extends State<RecycledItems> {
       final productService =
           Provider.of<ProductService>(context, listen: false);
       final products = await productService.getAllProducts(sortingType);
+      filteredProducts = products
+          .where((product) =>
+              product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
       setState(() {
-        _products = products;
+        _products = filteredProducts;
         isLoading = false;
       });
     } on Exception catch (e) {
@@ -53,6 +103,14 @@ class RecycledItemsState extends State<RecycledItems> {
         print('Error: $e');
       }
     }
+  }
+
+  void _delayBackendCalls(Function func, String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      // Perform your backend call here
+      func(query);
+    });
   }
 
   @override
@@ -72,6 +130,11 @@ class RecycledItemsState extends State<RecycledItems> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: TextField(
+                    onChanged: (query) {
+                      _delayBackendCalls(
+                          _fetchSearchProducts, query); // Trigger search
+                    },
+                    controller: _searchController,
                     focusNode: _focusNode,
                     autofocus: false,
                     decoration: InputDecoration(
@@ -106,7 +169,27 @@ class RecycledItemsState extends State<RecycledItems> {
                 const SizedBox(height: 10.0),
                 SizedBox(
                   height: 100,
-                  child: producttypeslist(),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          setState(() {
+                            _searchController.clear();
+                            selectedIndex = index;
+                            _delayBackendCalls(_fetchProductsByType,
+                                productTypes[index]['search']!);
+                          });
+                        },
+                        child: ProductTypeCard(
+                            item: productTypes[index],
+                            selectedIndex: selectedIndex,
+                            index: index),
+                      );
+                    },
+                    scrollDirection: Axis.horizontal,
+                    itemCount: productTypes.length,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -114,9 +197,9 @@ class RecycledItemsState extends State<RecycledItems> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'All Products',
-                        style: TextStyle(
+                      Text(
+                        productTypes[selectedIndex]['topic']!,
+                        style: const TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -140,14 +223,14 @@ class RecycledItemsState extends State<RecycledItems> {
                                     children: [
                                       ListTile(
                                         selected:
-                                            sortingType == 0 ? true : false,
+                                            sortingType == 1 ? true : false,
                                         selectedColor: Colors.green[800],
                                         title: const Text('Name: A to Z'),
                                         onTap: () {
                                           setState(() {
-                                            sortingType = 0;
+                                            sortingType = 1;
                                           });
-                                          _fetchProducts();
+                                          sortProducts();
                                           Navigator.pop(context);
                                         },
                                       ),
@@ -160,8 +243,8 @@ class RecycledItemsState extends State<RecycledItems> {
                                           setState(() {
                                             sortingType = 2;
                                           });
-                                          _fetchProducts();
 
+                                          sortProducts();
                                           Navigator.pop(context);
                                         },
                                       ),
@@ -174,7 +257,7 @@ class RecycledItemsState extends State<RecycledItems> {
                                           setState(() {
                                             sortingType = 3;
                                           });
-                                          _fetchProducts();
+                                          sortProducts();
                                           Navigator.pop(context);
                                         },
                                       ),
@@ -187,8 +270,7 @@ class RecycledItemsState extends State<RecycledItems> {
                                           setState(() {
                                             sortingType = 4;
                                           });
-                                          _fetchProducts();
-
+                                          sortProducts();
                                           Navigator.pop(context);
                                         },
                                       ),
@@ -226,9 +308,33 @@ class RecycledItemsState extends State<RecycledItems> {
                   child: isLoading
                       ? const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.0),
-                          child: Center(child: CircularProgressIndicator()),
+                          child: Center(
+                              child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color.fromARGB(255, 44, 113, 47)),
+                            strokeWidth: 4.0, // Width of the indicator stroke
+                            backgroundColor: Colors.transparent,
+                          )),
                         )
-                      : productslistgrid(_products),
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          physics:
+                              const NeverScrollableScrollPhysics(), // Disable internal scrolling
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 15.0,
+                            mainAxisSpacing: 15.0,
+                            childAspectRatio: 9 / 15,
+                          ),
+                          itemCount: _products.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            ProductModel product = _products[index];
+                            return ProductCard(
+                              item: product,
+                            );
+                          },
+                        ),
                 ),
               ],
             ),

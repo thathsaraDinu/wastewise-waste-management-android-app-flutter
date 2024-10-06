@@ -46,20 +46,7 @@ class ProductService extends ChangeNotifier {
       }).toList();
 
       // Sort the products by name
-      switch (sortType) {
-        case 1:
-          products.sort((a, b) => a.name.compareTo(b.name));
-          break;
-        case 2:
-          products.sort((a, b) => b.name.compareTo(a.name));
-          break;
-        case 3:
-          products.sort((a, b) => a.price.compareTo(b.price));
-          break;
-        case 4:
-          products.sort((a, b) => b.price.compareTo(a.price));
-          break;
-      }
+     
 
       return products;
     } catch (e) {

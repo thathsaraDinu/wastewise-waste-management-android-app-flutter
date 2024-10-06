@@ -78,7 +78,7 @@ class _ProductImagesState extends State<ProductImages> {
         ),
         if (itemno != 0)
           Positioned(
-            bottom: 130.0,
+            bottom: 140.0,
             left: 20.0,
             child: SizedBox(
               height: 40,
@@ -100,7 +100,7 @@ class _ProductImagesState extends State<ProductImages> {
           ),
         if (itemno != item.imageUrls.length - 1)
           Positioned(
-            bottom: 130.0,
+            bottom: 140.0,
             right: 20.0,
             child: SizedBox(
               height: 40,

@@ -59,7 +59,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           actions: [
-            if (name != 'Shopping cart')
+            if (name == 'WasteWise' || name == 'Details')
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Stack(

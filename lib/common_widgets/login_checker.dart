@@ -16,17 +16,27 @@ class LoginChecker extends StatelessWidget {
         stream: userRepo.user,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: SizedBox(
-                width: 50.0, // Set width
-                height: 50.0, // Set height
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.green), // Color of the indicator
-                  strokeWidth: 4.0, // Width of the indicator stroke
-                  backgroundColor:
-                      Colors.grey, // Background color behind the indicator
-                ),
+            return  Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/waste-wise-high-resolution-logo-transparent.png',
+                    height: 150,
+                  ),
+                  const SizedBox(height: 40,),
+                  const SizedBox(
+                    width: 30.0, // Set width
+                    height: 30.0, // Set height
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 44, 113, 47)), // Color of the indicator
+                      strokeWidth: 4.0, // Width of the indicator stroke
+                      backgroundColor:
+                          Colors.transparent, // Background color behind the indicator
+                    ),
+                  ),
+                ],
               ),
             );
           }

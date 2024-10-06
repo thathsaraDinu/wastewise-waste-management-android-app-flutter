@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shoppingapp/common/background_image.dart';
-import 'package:shoppingapp/screens/profile_page.dart';
-import 'package:shoppingapp/screens/recycled_items_main.dart';
+import 'package:shoppingapp/common_widgets/background_image_wrapper.dart';
+import 'package:shoppingapp/screens/_main_screens/profile_page.dart';
+import 'package:shoppingapp/screens/_main_screens/recycled_items_main.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -19,7 +19,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   static const List<Widget> _pages = <Widget>[
-    Center(child: RecycledItems()),
+    Center(child: RecycledItemsMain()),
     Center(child: Text('Search Page')),
     Center(child: Text('Settings Page')),
     Center(
@@ -29,7 +29,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BackgroundWrapper(
+    return BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: _pages[_selectedIndex],

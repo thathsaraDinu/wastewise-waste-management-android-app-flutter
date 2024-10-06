@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingapp/controller/firestore_provider.dart';
+import 'package:shoppingapp/common_widgets/custom_snackbar.dart';
+import 'package:shoppingapp/common_network_check/firestore_provider.dart';
 import 'package:user_repository/user_repository.dart';
 
-class ShoppingCartCard extends StatelessWidget {
+class ShoppingCartCard extends StatefulWidget {
   final CartItem cartItem;
 
   const ShoppingCartCard({super.key, required this.cartItem});
 
+  @override
+  State<ShoppingCartCard> createState() => _ShoppingCartCardState();
+}
+
+class _ShoppingCartCardState extends State<ShoppingCartCard> {
   @override
   Widget build(BuildContext context) {
     final cartService = Provider.of<FirebaseCartRepo>(context, listen: false);
     final user = Provider.of<FirebaseUserRepo>(context, listen: false);
     final userid = user.currentUser!.uid;
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -34,7 +41,7 @@ class ShoppingCartCard extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'LKR ${cartItem.price}',
+                'LKR ${widget.cartItem.price}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -67,8 +74,8 @@ class ShoppingCartCard extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () async {
-                                    await _removeCartItem(cartService, userid,
-                                        context); // Close the popup
+                                    await _removeCartItem(
+                                        cartService, userid, context);
                                   },
                                   child: const Text(
                                     "Delete",
@@ -101,7 +108,7 @@ class ShoppingCartCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Image.network(
-                          cartItem.imageUrl,
+                          widget.cartItem.imageUrl,
                           fit: BoxFit.cover,
                         ),
                         // Image widget for product image can go here
@@ -112,7 +119,7 @@ class ShoppingCartCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              cartItem.name,
+                              widget.cartItem.name,
                               style: const TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold,
@@ -123,7 +130,7 @@ class ShoppingCartCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Quantity: ${cartItem.quantity}',
+                              'Quantity: ${widget.cartItem.quantity}',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -164,7 +171,7 @@ class ShoppingCartCard extends StatelessWidget {
                                 Border.all(color: Colors.grey[400]!, width: 1),
                           ),
                           child: Text(
-                            '${cartItem.quantity}',
+                            '${widget.cartItem.quantity}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -199,7 +206,7 @@ class ShoppingCartCard extends StatelessWidget {
                           height: 35,
                           width: 35,
                           decoration: BoxDecoration(
-                            color: cartItem.color,
+                            color: widget.cartItem.color,
                             border: Border.all(color: Colors.black38, width: 1),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
@@ -231,17 +238,11 @@ class ShoppingCartCard extends StatelessWidget {
     try {
       await firestoreProvider.performFirestoreOperation(() async {
         // Perform the actual Firestore operation (addSingleItem)
-        await cartService.addSingleItem(
-            userId, cartItem.id, cartItem.unitPrice, cartItem.quantity);
+        await cartService.addSingleItem(userId, widget.cartItem.id,
+            widget.cartItem.unitPrice, widget.cartItem.quantity);
       }, context);
     } catch (e) {
       // Handle any errors that occur during the Firestore operation
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error adding item: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
@@ -255,31 +256,34 @@ class ShoppingCartCard extends StatelessWidget {
     try {
       await firestoreProvider.performFirestoreOperation(() async {
         // Perform the actual Firestore operation (addSingleItem)
-        await cartService.removeSingleItem(
-            userId, cartItem.id, cartItem.unitPrice, cartItem.quantity);
+        await cartService.removeSingleItem(userId, widget.cartItem.id,
+            widget.cartItem.unitPrice, widget.cartItem.quantity);
       }, context);
-    } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error removing item: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+      // ignore: empty_catches
+    } on Exception {}
   }
 
   Future<void> _removeCartItem(
       FirebaseCartRepo cartService, String userid, BuildContext context) async {
     final firestoreProvider =
         Provider.of<FirestoreProvider>(context, listen: false);
+
     try {
       await firestoreProvider.performFirestoreOperation(() async {
-        await cartService.removeCartItem(userid, cartItem.id);
+        await cartService.removeCartItem(userid, widget.cartItem.id);
       }, context);
-    } on Exception {
-      // TODO
-    } finally {
       Navigator.of(context).pop();
+      if (context.mounted) {
+        CustomSnackbar().show(
+          type: 's',
+          context: context,
+          message: 'Item Deleted!',
+        );
+      }
+    } on Exception {
+      // Handle error (You could show a snackbar or log it)
+    } finally {
+      // Close the dialog
     }
   }
 }

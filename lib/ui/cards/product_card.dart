@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:products_repository/products_repository.dart';
 
-class Productcard extends StatelessWidget {
+class ProductCard extends StatelessWidget {
   final ProductModel item;
 
-  const Productcard({super.key, required this.item});
+  const ProductCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class Productcard extends StatelessWidget {
                         child: Text(
                           item.name,
                           style: const TextStyle(
-                            fontSize: 18.0,
+                            fontSize: 17.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -74,7 +74,7 @@ class Productcard extends StatelessWidget {
                       Text(
                         '${item.price} LKR',
                         style: const TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 15.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),

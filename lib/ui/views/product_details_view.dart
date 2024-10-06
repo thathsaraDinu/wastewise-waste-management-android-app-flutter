@@ -1,13 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:products_repository/products_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingapp/controller/firestore_provider.dart';
+import 'package:shoppingapp/common_widgets/custom_snackbar.dart';
+import 'package:shoppingapp/common_network_check/firestore_provider.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ProductDetails extends StatefulWidget {
-  const ProductDetails({super.key});
+  final BuildContext parentContext;
+  const ProductDetails({super.key, required this.parentContext});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -17,20 +18,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   int itemAmount = 1;
   Color selectedColor = Colors.transparent;
   int colorSelect = 0;
-  bool isSnackBarActive = false;
-
-  Future<void> addToCart(
-      ProductModel item, String userid, FirebaseCartRepo cart) async {
-    await cart
-        .addCartItem(userid, selectedColor, itemAmount, item.id, item.price,
-            item.name, item.imageUrls[0], item.price)
-        .then((value) =>
-            showSnackBar(context, 'Item added to cart!', Colors.black))
-        .catchError((e) => {
-              if (kDebugMode) {print(e)},
-              showSnackBar(context, 'Please Check the Connection!', Colors.red)
-            });
-  }
+  bool isAddtoCartLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +108,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: colors.map((color) {
                         return GestureDetector(
                           onTap: () {
@@ -130,8 +119,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                             });
                           },
                           child: Container(
-                            height: color == selectedColor ? 35 : 30,
-                            width: color == selectedColor ? 35 : 30,
+                            height: color == selectedColor ? 35 : 28,
+                            width: color == selectedColor ? 35 : 28,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
                               color: color,
@@ -300,21 +289,29 @@ class _ProductDetailsState extends State<ProductDetails> {
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
+            disabledBackgroundColor: Colors.black,
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
           ),
-          onPressed: isSnackBarActive
+          onPressed: isAddtoCartLoading
               ? null // Disable button while SnackBar is active
               : () async {
                   if (selectedColor == Colors.transparent) {
-                    showSnackBar(context, 'Please select a color!', Colors.red);
+                    if (mounted) {
+                      CustomSnackbar().show(
+                          context: widget.parentContext,
+                          message: 'Please select a color!',
+                          type: 'w');
+                    }
                   } else {
                     await _addToCart(item, userid, cart, context);
                   }
                 },
-          child: const Text('Add to Cart', style: TextStyle(fontSize: 18.0)),
+          child: isAddtoCartLoading
+              ? progressIndicator()
+              : const Text('Add to Cart', style: TextStyle(fontSize: 18.0)),
         ),
         const SizedBox(
           height: 10.0,
@@ -333,57 +330,42 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
+  Widget progressIndicator() {
+    return const SizedBox(
+      height: 26.0,
+      width: 26.0,
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: 3.0,
+        backgroundColor: Colors.black,
+      ),
+    );
+  }
+
   Future<void> _addToCart(ProductModel item, String userid,
       FirebaseCartRepo cart, BuildContext context) async {
+    setState(() {
+      isAddtoCartLoading = true;
+    });
     final firestoreProvider =
         Provider.of<FirestoreProvider>(context, listen: false);
     try {
       await firestoreProvider.performFirestoreOperation(() async {
         await cart.addCartItem(userid, selectedColor, itemAmount, item.id,
             item.price, item.name, item.imageUrls[0], item.price);
-        showSnackBar(context, 'Item added to cart!', Colors.black);
+        if (mounted) {
+          CustomSnackbar().show(
+            type: 's',
+            context: widget.parentContext,
+            message: 'Item added to cart!',
+          );
+        }
       }, context);
-    } catch (e) {
-      showSnackBar(context, 'Error Adding Item!', Colors.red);
-    }
-  }
-
-  void showSnackBar(BuildContext context, String message, Color bgColor) {
-    setState(() {
-      isSnackBarActive = true; // Disable button
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-          SnackBar(
-            elevation: 0,
-            content: Container(
-              height: 40,
-              alignment: Alignment.center,
-              child: Text(
-                textAlign: TextAlign.center,
-                message,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
-            duration: const Duration(seconds: 2),
-            backgroundColor: bgColor.withOpacity(0.75), // 50% transparency
-            behavior: SnackBarBehavior.floating,
-
-            margin: const EdgeInsets.only(bottom: 400, right: 70, left: 70),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            onVisible: () {}, // Optional callback when visible
-          ),
-        )
-        .closed
-        .then((_) {
+    } finally {
       setState(() {
-        isSnackBarActive = false; // Re-enable button
+        isAddtoCartLoading = false;
       });
-    });
+    }
   }
 
   Row ratingstars(ProductModel item) {
