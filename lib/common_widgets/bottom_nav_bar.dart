@@ -19,9 +19,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   static const List<Widget> _pages = <Widget>[
+    Center(child: Text('Home Page')),
+    Center(child: Text('Schedule Page')),
     Center(child: RecycledItemsMain()),
-    Center(child: Text('Search Page')),
-    Center(child: Text('Settings Page')),
+    Center(child: Text('History Page')),
     Center(
       child: ProfilePage(),
     )
@@ -36,33 +37,38 @@ class _BottomNavBarState extends State<BottomNavBar> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.teal, // Color for the selected item
-          unselectedItemColor: Colors.grey[400], // Color for unselected items
+          selectedItemColor: Colors.green[600], // Color for the selected item
+          unselectedItemColor: Colors.grey[500], // Color for unselected items
           showUnselectedLabels: false, // Hides unselected labels
-          showSelectedLabels: false, // Hides selected labels
+          showSelectedLabels: true, // Hides selected labels
           elevation: 15, // Adds shadow effect
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
+              icon: Icon(Icons.home),
               activeIcon:
                   Icon(Icons.home, size: 30), // Active icon with larger size
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search_outlined),
-              activeIcon: Icon(Icons.search, size: 30),
-              label: 'Search',
+              icon: Icon(Icons.calendar_month),
+              activeIcon: Icon(Icons.calendar_month, size: 30),
+              label: 'Schedule',
+            ),
+             BottomNavigationBarItem(
+              icon: Icon(Icons.store, ),
+              activeIcon:
+                  Icon(Icons.store, size: 30), // Active icon with larger size
+              label: 'Store',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings, size: 30),
-              label: 'Cart',
+              icon: Icon(Icons.history),
+              activeIcon: Icon(Icons.history, size: 30),
+              label: 'History',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
+              icon: Icon(Icons.person),
               activeIcon: Icon(Icons.person, size: 30),
               label: 'Profile',
             ),
