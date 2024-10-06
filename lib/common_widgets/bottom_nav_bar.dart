@@ -46,29 +46,29 @@ class _BottomNavBarState extends State<BottomNavBar> {
           elevation: 15, // Adds shadow effect
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
               activeIcon:
                   Icon(Icons.home, size: 30), // Active icon with larger size
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
+              icon: Icon(Icons.calendar_month_outlined),
               activeIcon: Icon(Icons.calendar_month, size: 30),
               label: 'Schedule',
             ),
              BottomNavigationBarItem(
-              icon: Icon(Icons.store, ),
+              icon: Icon(Icons.store_outlined, ),
               activeIcon:
                   Icon(Icons.store, size: 30), // Active icon with larger size
               label: 'Store',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.history),
+              icon: Icon(Icons.history_outlined),
               activeIcon: Icon(Icons.history, size: 30),
               label: 'History',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.person_outlined),
               activeIcon: Icon(Icons.person, size: 30),
               label: 'Profile',
             ),
