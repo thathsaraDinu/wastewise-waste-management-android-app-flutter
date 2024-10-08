@@ -8,19 +8,22 @@ import 'package:provider/provider.dart';
 import 'package:waste_wise/common_network_check/firestore_provider.dart';
 import 'package:waste_wise/routes/routes.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:waste_wise/constants/constants.dart' as constants;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   if (kIsWeb) {
     await Firebase.initializeApp(
-      name: 'db2',
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyDFPTw8FdvE7HmhVjQU3RNcdE49z3LMHUA",
-          authDomain: "wastewise-7b983.firebaseapp.com",
-          projectId: "wastewise-7b983",
-          storageBucket: "wastewise-7b983.appspot.com",
-          messagingSenderId: "951086348501",
-          appId: "1:951086348501:web:c1f2244bfb584886ef8a5c"),
+      name: constants.dbName,
+      options: FirebaseOptions(
+          apiKey: constants.apiKey,
+          authDomain: constants.authDomain,
+          projectId: constants.projectId,
+          storageBucket: constants.storageBucket,
+          messagingSenderId: constants.messagingSenderId,
+          appId: constants.appId),
     );
   } else {
     await Firebase.initializeApp();
