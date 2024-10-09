@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:waste_wise/screens/_main_screens/profile_page.dart';
 import 'package:waste_wise/screens/_main_screens/recycled_items_main.dart';
+import 'package:waste_wise/screens/_main_screens/waste_pickup_schedule_main.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -20,7 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Home Page')),
-    Center(child: Text('Schedule Page')),
+    Center(child: WastePickupScheduleMain()),
     Center(child: RecycledItemsMain()),
     Center(child: Text('History Page')),
     Center(
@@ -56,8 +57,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               activeIcon: Icon(Icons.calendar_month, size: 30),
               label: 'Schedule',
             ),
-             BottomNavigationBarItem(
-              icon: Icon(Icons.store_outlined, ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.store_outlined,
+              ),
               activeIcon:
                   Icon(Icons.store, size: 30), // Active icon with larger size
               label: 'Store',
