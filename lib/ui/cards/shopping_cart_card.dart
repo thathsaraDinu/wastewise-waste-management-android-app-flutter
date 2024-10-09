@@ -21,7 +21,7 @@ class _ShoppingCartCardState extends State<ShoppingCartCard> {
     final userid = user.currentUser!.uid;
     return Card(
       color: Colors.white,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
