@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class VendorHome extends StatefulWidget {
   const VendorHome({super.key});
 
@@ -11,7 +10,7 @@ class VendorHome extends StatefulWidget {
 class _VendorHomeState extends State<VendorHome> {
   @override
   Widget build(BuildContext context) {
-    return Container (
+    return Container(
       child: const Text("Vendor Home"),
     );
   }
