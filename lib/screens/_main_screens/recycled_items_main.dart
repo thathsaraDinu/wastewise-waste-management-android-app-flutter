@@ -131,7 +131,8 @@ class RecycledItemsMainState extends State<RecycledItemsMain> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: TextField(
                     onChanged: (query) {
-                      _fetchSearchProducts(query); // Trigger search
+                      _delayBackendCalls(
+                          _fetchSearchProducts, query); // Trigger search
                     },
                     controller: _searchController,
                     focusNode: _focusNode,

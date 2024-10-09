@@ -159,16 +159,23 @@ class _ShoppingBagPageState extends State<ShoppingBagPage> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/checkout',
+                            arguments: totalPrice);
+                      },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        backgroundColor: Colors.green[700],
+                        elevation: 5.0,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 12.0),
                       ),
                       child: const Text(
                         "Checkout",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],

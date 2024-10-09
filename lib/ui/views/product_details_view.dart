@@ -318,7 +318,7 @@ class _ProductDetailsState extends State<ProductDetails> {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.green[700],
             foregroundColor: Colors.white,
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),

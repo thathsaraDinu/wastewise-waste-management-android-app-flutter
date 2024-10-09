@@ -94,6 +94,10 @@ class _ReviewPageState extends State<ReviewPage> {
                   decoration: const InputDecoration(
                     labelText: 'Comment',
                     border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior
+                        .always, // Ensure label floats above
+                    contentPadding: EdgeInsets.fromLTRB(
+                        12, 20, 12, 12), // Adjust padding to raise label
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -110,7 +114,10 @@ class _ReviewPageState extends State<ReviewPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -119,7 +126,10 @@ class _ReviewPageState extends State<ReviewPage> {
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text('Submit'),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );
@@ -132,7 +142,9 @@ class _ReviewPageState extends State<ReviewPage> {
     return BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: const CustomAppBar(name: 'Reviews',),
+        appBar: const CustomAppBar(
+          name: 'Reviews',
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -144,7 +156,7 @@ class _ReviewPageState extends State<ReviewPage> {
                     final review = _reviews[index];
                     final bool isHardcoded = review['isHardcoded'] ??
                         false; // Safely access isHardcoded
-      
+
                     return Card(
                       color: Colors.white,
                       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -187,14 +199,15 @@ class _ReviewPageState extends State<ReviewPage> {
                             ),
                           ],
                         ),
-                        
+
                         subtitle: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(review['comment']),
                         ),
                         trailing: !isHardcoded
                             ? IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _deleteReview(index);
                                 },
@@ -206,13 +219,20 @@ class _ReviewPageState extends State<ReviewPage> {
                 ),
               ),
               ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    Colors.green[300]
-                  )
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[700],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 12.0),
                 ),
                 onPressed: _showAddReviewDialog,
-                child: const Text('Add Review', style: TextStyle(color: Colors.black),),
+                child: const Text(
+                  'Add Review',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
