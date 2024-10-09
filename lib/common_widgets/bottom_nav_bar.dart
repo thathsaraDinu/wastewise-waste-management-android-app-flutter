@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/screens/_main_screens/history_page.dart';
 import 'package:waste_wise/screens/_main_screens/profile_page.dart';
 import 'package:waste_wise/screens/_main_screens/recycled_items_main.dart';
 import 'package:waste_wise/screens/_main_screens/waste_pickup_schedule_main.dart';
@@ -23,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     Center(child: Text('Home Page')),
     Center(child: WastePickupScheduleMain()),
     Center(child: RecycledItemsMain()),
-    Center(child: Text('History Page')),
+    Center(child: HistoryMain()),
     Center(
       child: ProfilePage(),
     )
