@@ -29,14 +29,6 @@ class _WastePickupScheduleDetailsState
         : throw 'Could not launch $googleURL';
   }
 
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
-    await launchUrl(launchUri);
-  }
-
   void _editPickup() {
     var pickupData = widget.pickup;
     Navigator.push(
@@ -74,131 +66,173 @@ class _WastePickupScheduleDetailsState
         ],
         backgroundColor: Colors.green[600],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Access details from the full pickup object
-            Text(
-              'Scheduled Pickup Date:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[600],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Scheduled Pickup Date:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.pickup['scheduledDate'], // Use the pickup object here
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['scheduledDate'], // Use the pickup object here
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Waste Type:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[600],
+              const SizedBox(height: 16),
+              Text(
+                'Waste Type:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.pickup['wasteType'], // Use the pickup object here
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['wasteType'], // Use the pickup object here
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Address:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[600],
+              const SizedBox(height: 16),
+              Text(
+                'Address:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.pickup['address'], // Use the pickup object here
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['address'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(
-              thickness: 1,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Additional Details:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[600],
+              const SizedBox(height: 16),
+              Text(
+                'Phone:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.pickup['description'] ?? 'No additional details provided',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['phone'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String phone = widget.pickup['phone'];
-                      _makePhoneCall(phone);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.green, width: 1),
-                      textStyle: const TextStyle(color: Colors.green),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 16),
+              Text(
+                'Snapshot:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              ImageDisplay(imageUrl: widget.pickup['imageUrl']),
+              const Divider(
+                thickness: 1,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Additional Details:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                (widget.pickup['description'] != null &&
+                        widget.pickup['description']
+                            .toString()
+                            .trim()
+                            .isNotEmpty)
+                    ? widget.pickup['description'].toString()
+                    : 'No additional details provided',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        String latitude = widget.pickup['latitude'];
+                        String longitude = widget.pickup['longitude'];
+                        _openMap(latitude, longitude);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.green, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.map, color: Colors.green[600]),
+                          const SizedBox(width: 8),
+                          Text(
+                            "View Location",
+                            style: TextStyle(color: Colors.green[600]),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Text("Call Now",
-                        style: TextStyle(color: Colors.green[600])),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String latitude = widget.pickup['latitude'];
-                      String longitude = widget.pickup['longitude'];
-                      _openMap(latitude, longitude);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.green, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "View Map",
-                      style: TextStyle(color: Colors.green[600]),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+// Add the ImageDisplay component here
+class ImageDisplay extends StatelessWidget {
+  final String? imageUrl;
+
+  const ImageDisplay({Key? key, this.imageUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: imageUrl != null && imageUrl!.isNotEmpty
+            ? Image.network(
+                imageUrl!,
+                width: double.infinity, // Set width as needed
+                height: 280, // Set height as needed
+                fit: BoxFit.fill, // Adjusts how the image fits
+              )
+            : const Text("No image available", style: TextStyle(fontSize: 16)));
   }
 }

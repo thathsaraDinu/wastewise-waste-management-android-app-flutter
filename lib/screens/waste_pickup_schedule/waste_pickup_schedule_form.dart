@@ -1,8 +1,11 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 const List<String> list = <String>[
   'E-Waste',
@@ -28,6 +31,27 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
   final TextEditingController descriptionController = TextEditingController();
   late String latitude = '';
   late String longitude = '';
+  File? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation().then((value) {
+      latitude = '${value.latitude}';
+      longitude = '${value.longitude}';
+    });
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path); // Get the image as a file
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -63,12 +87,32 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
         ),
       );
     } else {
+      String? imageUrl;
+      if (_imageFile != null) {
+        // Upload the image to Firebase Storage
+        try {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('waste_pickups/${DateTime.now().toIso8601String()}');
+          await ref.putFile(_imageFile!);
+          imageUrl = await ref.getDownloadURL(); // Get the download URL
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to upload image: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
       try {
         await FirebaseFirestore.instance.collection('waste_pickups').add({
           'wasteType': wasteType,
           'scheduledDate': scheduledDate,
           'address': address,
           'phone': phone,
+          'imageUrl': imageUrl,
           'latitude': latitude,
           'longitude': longitude,
           'description': description,
@@ -235,35 +279,37 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
                 ),
               ),
               const SizedBox(height: 15),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _getCurrentLocation().then((value) {
-                      latitude = '${value.latitude}';
-                      longitude = '${value.longitude}';
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Location is recorded'),
-                        backgroundColor: Colors.green,
+              const Text("Snapshot:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 5),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _imageFile != null
+                      ? Image.file(_imageFile!)
+                      : const Text("No image selected"),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _pickImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                              color: Colors.green.shade600, width: 1),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Colors.green.shade600, width: 1),
+                      child: Text('Capture a Snapshot',
+                          style: TextStyle(
+                              color: Colors.green[600],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500)),
                     ),
                   ),
-                  child: Text('Set Current Location',
-                      style: TextStyle(
-                          color: Colors.green[600],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500)),
-                ),
+                ],
               ),
               const SizedBox(height: 15),
               const Text("Description (optional):",

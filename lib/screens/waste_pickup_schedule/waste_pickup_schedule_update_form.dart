@@ -1,8 +1,13 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import 'package:waste_wise/screens/_main_screens/waste_pickup_schedule_main.dart';
 
 const List<String> list = <String>[
   'E-Waste',
@@ -36,6 +41,7 @@ class _WastePickupScheduleUpdateFormState
   final TextEditingController descriptionController = TextEditingController();
   late String latitude = '';
   late String longitude = '';
+  File? _imageFile;
 
   @override
   void initState() {
@@ -45,8 +51,21 @@ class _WastePickupScheduleUpdateFormState
     addressController.text = widget.pickup['address'] ?? '';
     phoneController.text = widget.pickup['phone'] ?? '';
     descriptionController.text = widget.pickup['description'] ?? '';
-    latitude = widget.pickup['latitude']?.toString() ?? '';
-    longitude = widget.pickup['longitude']?.toString() ?? '';
+    _getCurrentLocation().then((value) {
+      latitude = '${value.latitude}';
+      longitude = '${value.longitude}';
+    });
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -83,6 +102,25 @@ class _WastePickupScheduleUpdateFormState
         ),
       );
     } else {
+      String? imageUrl;
+      if (_imageFile != null) {
+        // Upload the image to Firebase Storage
+        try {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('waste_pickups/${DateTime.now().toIso8601String()}');
+          await ref.putFile(_imageFile!);
+          imageUrl = await ref.getDownloadURL(); // Get the download URL
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to upload image: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
       try {
         await FirebaseFirestore.instance
             .collection('waste_pickups')
@@ -92,13 +130,18 @@ class _WastePickupScheduleUpdateFormState
           'scheduledDate': scheduledDate,
           'address': address,
           'phone': phone,
+          'imageUrl': imageUrl,
           'latitude': latitude,
           'longitude': longitude,
           'description': description,
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const WastePickupScheduleMain()),
+        );
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -258,35 +301,35 @@ class _WastePickupScheduleUpdateFormState
                 ),
               ),
               const SizedBox(height: 15),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _getCurrentLocation().then((value) {
-                      latitude = '${value.latitude}';
-                      longitude = '${value.longitude}';
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Location is recorded'),
-                        backgroundColor: Colors.green,
+              const Text("Snapshot:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              ImageDisplay(imageUrl: widget.pickup['imageUrl']),
+              const SizedBox(height: 5),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(height: 5),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _pickImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                              color: Colors.green.shade600, width: 1),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: Colors.green.shade600, width: 1),
+                      child: Text('Capture a Snapshot',
+                          style: TextStyle(
+                              color: Colors.green[600],
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500)),
                     ),
                   ),
-                  child: Text('Set Current Location',
-                      style: TextStyle(
-                          color: Colors.green[600],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500)),
-                ),
+                ],
               ),
               const SizedBox(height: 15),
               const Text("Description (optional):",
@@ -330,5 +373,24 @@ class _WastePickupScheduleUpdateFormState
         ),
       ),
     );
+  }
+}
+
+class ImageDisplay extends StatelessWidget {
+  final String? imageUrl;
+
+  const ImageDisplay({Key? key, this.imageUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: imageUrl != null && imageUrl!.isNotEmpty
+            ? Image.network(
+                imageUrl!,
+                width: double.infinity, // Set width as needed
+                height: 280, // Set height as needed
+                fit: BoxFit.fill, // Adjusts how the image fits
+              )
+            : const Text("No image available", style: TextStyle(fontSize: 16)));
   }
 }
