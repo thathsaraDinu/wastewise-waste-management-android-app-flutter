@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_form.dart';
+import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_details.dart';
 
 class WastePickupScheduleMain extends StatefulWidget {
   const WastePickupScheduleMain({super.key});
@@ -10,6 +12,23 @@ class WastePickupScheduleMain extends StatefulWidget {
 }
 
 class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
+  // Function to delete a pickup request
+  Future<void> _deletePickup(String documentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('waste_pickups')
+          .doc(documentId)
+          .delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pickup schedule canceled successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to cancel pickup schedule')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +49,6 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
           color: Colors.white,
         ),
       ),
-      // Adding content to the second Row
-
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,128 +119,181 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: List.generate(
-                  6,
-                  (index) => Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.green[50],
-                        border:
-                            Border.all(color: Colors.green.shade600, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Pickup Request",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 16),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.green.shade600,
-                                          width: 1)),
-                                  child: Text(
-                                    "Scheduled",
-                                    style: TextStyle(
-                                      color: Colors.green.shade600,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('waste_pickups')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                var pickupData = snapshot.data!.docs;
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: List.generate(
+                      pickupData.length,
+                      (index) {
+                        var pickup = pickupData[index];
+                        String documentId = pickup.id; // Document ID
+
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.green[50],
+                              border: Border.all(
+                                  color: Colors.green.shade600, width: 1),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(height: 8),
-                            const Row(
-                              children: [
-                                Icon(Icons.calendar_today,
-                                    size: 18, color: Colors.black),
-                                SizedBox(width: 8),
-                                Text(
-                                  "15th October 2024, 9:00 AM",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Pickup Request",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 16),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: Colors.green.shade600,
+                                                width: 1)),
+                                        child: Text(
+                                          "Scheduled",
+                                          style: TextStyle(
+                                            color: Colors.green.shade600,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          size: 18, color: Colors.black),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        pickup['scheduledDate'],
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.delete_outline,
+                                          size: 18, color: Colors.black),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        pickup['wasteType'],
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      OutlinedButton.icon(
+                                        onPressed: () {
+                                          var pickupData = pickup.data()
+                                              as Map<String, dynamic>?;
+
+                                          if (pickupData != null) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WastePickupScheduleDetails(
+                                                  pickup:
+                                                      pickupData, // Pass the full pickup object
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            // Handle the case where pickupData is null
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Pickup details are missing')),
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.info,
+                                            color: Colors.green[600]),
+                                        label: Text(
+                                          "Details",
+                                          style: TextStyle(
+                                              color: Colors.green[600]),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                              color: Colors.green.shade600,
+                                              width: 1),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                        ),
+                                      ),
+                                      OutlinedButton.icon(
+                                        onPressed: () {
+                                          _deletePickup(
+                                              documentId); // Delete action
+                                        },
+                                        icon: const Icon(Icons.cancel,
+                                            color: Colors.red),
+                                        label: const Text(
+                                          "Cancel",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                              color: Colors.red, width: 1),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 8),
-                            const Row(
-                              children: [
-                                Icon(Icons.delete_outline,
-                                    size: 18, color: Colors.black),
-                                SizedBox(width: 8),
-                                Text(
-                                  "E-Waste",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.info,
-                                      color: Colors.green[600]),
-                                  label: Text(
-                                    "Details",
-                                    style: TextStyle(color: Colors.green[600]),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    side: BorderSide(
-                                        color: Colors.green.shade600,
-                                        width: 1), // Border color and width
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    backgroundColor:
-                                        Colors.white, // Background color
-                                  ),
-                                ),
-                                OutlinedButton.icon(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.cancel,
-                                      color: Colors.red),
-                                  label: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    side: const BorderSide(
-                                        color: Colors.red, width: 1),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],
