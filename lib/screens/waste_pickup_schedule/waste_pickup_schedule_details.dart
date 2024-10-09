@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_update_form.dart';
 
 class WastePickupScheduleDetails extends StatefulWidget {
-  final Map<String, dynamic> pickup; // Full pickup object
+  final Map<String, dynamic> pickup;
+  final String documentId;
 
   const WastePickupScheduleDetails({
     super.key,
-    required this.pickup, // Pass the full pickup object
+    required this.pickup,
+    required this.documentId,
   });
 
   @override
@@ -34,6 +37,17 @@ class _WastePickupScheduleDetailsState
     await launchUrl(launchUri);
   }
 
+  void _editPickup() {
+    var pickupData = widget.pickup;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WastePickupScheduleUpdateForm(
+            pickup: pickupData, documentId: widget.documentId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +66,12 @@ class _WastePickupScheduleDetailsState
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: _editPickup, // Call the edit function
+          ),
+        ],
         backgroundColor: Colors.green[600],
       ),
       body: Padding(

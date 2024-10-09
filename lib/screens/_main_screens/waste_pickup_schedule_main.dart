@@ -29,6 +29,39 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
     }
   }
 
+  // Function to show confirmation dialog
+  Future<void> _confirmDelete(String documentId) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Cancellation'),
+        content:
+            const Text('Are you sure you want to cancel this pickup schedule?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Dismiss the dialog
+            },
+            child: Text(
+              'No',
+              style: TextStyle(color: Colors.green[600]),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _deletePickup(documentId); // Proceed with deletion
+              Navigator.of(context).pop(); // Dismiss the dialog
+            },
+            child: Text(
+              'Yes',
+              style: TextStyle(color: Colors.green[600]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,9 +261,8 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     WastePickupScheduleDetails(
-                                                  pickup:
-                                                      pickupData, // Pass the full pickup object
-                                                ),
+                                                        pickup: pickupData,
+                                                        documentId: pickup.id),
                                               ),
                                             );
                                           } else {
@@ -263,8 +295,7 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
                                       ),
                                       OutlinedButton.icon(
                                         onPressed: () {
-                                          _deletePickup(
-                                              documentId); // Delete action
+                                          _confirmDelete(documentId);
                                         },
                                         icon: const Icon(Icons.cancel,
                                             color: Colors.red),

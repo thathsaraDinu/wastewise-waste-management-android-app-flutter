@@ -11,15 +11,23 @@ const List<String> list = <String>[
   'Plastic Waste'
 ];
 
-class WastePickupScheduleForm extends StatefulWidget {
-  const WastePickupScheduleForm({super.key});
+class WastePickupScheduleUpdateForm extends StatefulWidget {
+  final Map<String, dynamic> pickup;
+  final String documentId;
+
+  const WastePickupScheduleUpdateForm({
+    super.key,
+    required this.pickup,
+    required this.documentId,
+  });
 
   @override
-  State<WastePickupScheduleForm> createState() =>
-      _WastePickupScheduleFormState();
+  State<WastePickupScheduleUpdateForm> createState() =>
+      _WastePickupScheduleUpdateFormState();
 }
 
-class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
+class _WastePickupScheduleUpdateFormState
+    extends State<WastePickupScheduleUpdateForm> {
   String dropdownValue = list.first;
   final TextEditingController _dateController =
       TextEditingController(text: "Choose date");
@@ -28,6 +36,18 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
   final TextEditingController descriptionController = TextEditingController();
   late String latitude = '';
   late String longitude = '';
+
+  @override
+  void initState() {
+    super.initState();
+    dropdownValue = widget.pickup['wasteType'] ?? list.first;
+    _dateController.text = widget.pickup['scheduledDate'] ?? "Choose date";
+    addressController.text = widget.pickup['address'] ?? '';
+    phoneController.text = widget.pickup['phone'] ?? '';
+    descriptionController.text = widget.pickup['description'] ?? '';
+    latitude = widget.pickup['latitude']?.toString() ?? '';
+    longitude = widget.pickup['longitude']?.toString() ?? '';
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -64,7 +84,10 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
       );
     } else {
       try {
-        await FirebaseFirestore.instance.collection('waste_pickups').add({
+        await FirebaseFirestore.instance
+            .collection('waste_pickups')
+            .doc(widget.documentId)
+            .update({
           'wasteType': wasteType,
           'scheduledDate': scheduledDate,
           'address': address,
@@ -79,7 +102,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Waste pickup scheduled successfully!'),
+            content: Text('Waste pickup updated successfully!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -126,7 +149,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
       appBar: AppBar(
         titleSpacing: 0,
         title: const Text(
-          'Schedule your waste pickup',
+          'Update your schedule',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -159,7 +182,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
                 menuStyle: MenuStyle(
                     backgroundColor: WidgetStateProperty.all(Colors.green[50])),
                 width: MediaQuery.of(context).size.width - 32,
-                initialSelection: list.first,
+                initialSelection: dropdownValue,
                 onSelected: (String? value) {
                   setState(() {
                     dropdownValue = value!;
@@ -297,7 +320,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Schedule Pickup Request',
+                  child: const Text('Update Schedule',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 ),
