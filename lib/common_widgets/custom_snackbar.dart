@@ -17,7 +17,7 @@ class CustomSnackbar {
   void show({
     required BuildContext context,
     required String message,
-     // Default color if none provided
+    // Default color if none provided
     Duration duration = const Duration(seconds: 3),
     required String
         type, // Message type: 'e', 'w', 's' for error, warning, success
@@ -26,16 +26,19 @@ class CustomSnackbar {
     if (_isSnackbarActive) {
       return;
     }
+    double screenHeight = MediaQuery.of(context).size.height;
+    double topPosition = screenHeight / 2;
 
     _isSnackbarActive = true; // Set the flag to true when a Snackbar is shown
 
     // Create an OverlayEntry for the Snackbar
     _activeOverlay = OverlayEntry(
       builder: (context) => Positioned(
+        left: 80,
+        right: 80,
         top:
-            100, // Set this value to adjust how far from the top you want the Snackbar
-        left: 100,
-        right: 100,
+            topPosition - 80, // Set this value to adjust how far from the top you want the Snackbar
+
         child: Material(
           color: Colors.transparent,
           child: Container(
@@ -56,7 +59,10 @@ class CustomSnackbar {
                       : type == 'w'
                           ? 'Warning'
                           : 'Success',
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 5),

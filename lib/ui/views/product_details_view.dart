@@ -323,7 +323,25 @@ class _ProductDetailsState extends State<ProductDetails> {
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
           ),
-          onPressed: () {},
+          onPressed: () {
+            if(selectedColor == Colors.transparent) {
+              CustomSnackbar().show(
+                context: widget.parentContext,
+                message: 'Please select a color!',
+                type: 'w',
+              );
+              return;
+            }
+            Navigator.pushNamed(
+              context,
+              '/shoppingbag',
+              arguments: {
+                'item': item, // Pass item directly
+                'quantity': itemAmount,
+                'color': selectedColor,
+              },
+            );
+          },
           child: const Text('Buy Now', style: TextStyle(fontSize: 18.0)),
         ),
       ],
@@ -353,6 +371,7 @@ class _ProductDetailsState extends State<ProductDetails> {
       await firestoreProvider.performFirestoreOperation(() async {
         await cart.addCartItem(userid, selectedColor, itemAmount, item.id,
             item.price, item.name, item.imageUrls[0], item.price);
+        print('Item added to cart: ${item.name} at ${item.price}');
         if (mounted) {
           CustomSnackbar().show(
             type: 's',
@@ -395,12 +414,20 @@ class _ProductDetailsState extends State<ProductDetails> {
         const SizedBox(
           width: 10.0,
         ),
-        Text(
-          '${item.ratingCount} reviews',
-          style: const TextStyle(
-            fontSize: 16.0,
-            color: Colors.blue,
-            fontWeight: FontWeight.w500,
+        InkWell(
+          onTap: (){
+            Navigator.pushNamed(
+              context,
+              '/reviews',
+            );
+          },
+          child: Text(
+            '${item.ratingCount} reviews',
+            style: const TextStyle(
+              fontSize: 16.0,
+              color: Colors.blue,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         )
       ],
