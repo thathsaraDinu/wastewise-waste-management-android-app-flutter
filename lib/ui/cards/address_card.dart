@@ -16,8 +16,8 @@ class _AddressCardState extends State<AddressCard> {
 
   // Function to open the dialog for editing address
   Future<void> _editAddress() async {
-    final _addressController = TextEditingController(text: _address);
-    final _contactController = TextEditingController(text: _contact);
+    final addressController = TextEditingController(text: _address);
+    final contactController = TextEditingController(text: _contact);
 
     await showDialog(
       context: context,
@@ -29,7 +29,7 @@ class _AddressCardState extends State<AddressCard> {
             children: [
               // Address input field
               TextField(
-                controller: _addressController,
+                controller: addressController,
                 decoration: const InputDecoration(
                   labelText: 'Address',
                 ),
@@ -37,7 +37,7 @@ class _AddressCardState extends State<AddressCard> {
               const SizedBox(height: 10),
               // Contact input field
               TextField(
-                controller: _contactController,
+                controller: contactController,
                 decoration: const InputDecoration(
                   labelText: 'Contact',
                 ),
@@ -54,8 +54,8 @@ class _AddressCardState extends State<AddressCard> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _address = _addressController.text;
-                  _contact = _contactController.text;
+                  _address = addressController.text;
+                  _contact = contactController.text;
                 });
                 Navigator.of(context).pop();
               },

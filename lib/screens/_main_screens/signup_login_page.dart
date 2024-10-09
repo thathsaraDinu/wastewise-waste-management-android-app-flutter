@@ -3,6 +3,10 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:provider/provider.dart';
 
+// Import vendor home screen
+import 'package:waste_wise/screens/_main_screens/vendor_login_page.dart';
+import 'package:waste_wise/screens/_main_screens/vendor_register_page.dart';
+
 class SignupLoginPage extends StatefulWidget {
   const SignupLoginPage({super.key});
 
@@ -53,6 +57,22 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
         }
       }
     }
+  }
+
+  // Method for Vendor Login Navigation
+  void _navigateToVendorLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VendorLoginPage()),
+    );
+  }
+
+  // Method for Vendor Register Navigation
+  void _navigateToVendorRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VendorRegisterPage()),
+    );
   }
 
   @override
@@ -241,6 +261,41 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
                                 ),
                               ],
                             ),
+                            // Vendor Login Section
+                            if (isLogin)
+                              Column(
+                                children: [
+                                  const SizedBox(height: 0),
+                                  GestureDetector(
+                                    onTap: _navigateToVendorLogin,
+                                    child: const Text(
+                                      'Vendor Login',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.none,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              Column(
+                                children: [
+                                  const SizedBox(height: 0),
+                                  GestureDetector(
+                                    onTap: _navigateToVendorRegister,
+                                    child: const Text(
+                                      'Vendor Sign Up',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.none,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       ),
