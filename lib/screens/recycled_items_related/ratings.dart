@@ -4,7 +4,7 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:waste_wise/common_widgets/custom_app_bar.dart';
 
 class ReviewPage extends StatefulWidget {
-  const ReviewPage({Key? key}) : super(key: key);
+  const ReviewPage({super.key});
 
   @override
   _ReviewPageState createState() => _ReviewPageState();
@@ -56,9 +56,9 @@ class _ReviewPageState extends State<ReviewPage> {
 
   // Function to show a dialog for adding a new review
   Future<void> _showAddReviewDialog() async {
-    final _formKey = GlobalKey<FormState>();
-    final TextEditingController _commentController = TextEditingController();
-    int _rating = 1;
+    final formKey = GlobalKey<FormState>();
+    final TextEditingController commentController = TextEditingController();
+    int rating = 1;
 
     await showDialog(
       context: context,
@@ -66,13 +66,13 @@ class _ReviewPageState extends State<ReviewPage> {
         return AlertDialog(
           title: const Text('Add a Review'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Rating input (Dropdown)
                 DropdownButtonFormField<int>(
-                  value: _rating,
+                  value: rating,
                   decoration: const InputDecoration(labelText: 'Rating'),
                   items: List.generate(5, (index) {
                     return DropdownMenuItem<int>(
@@ -81,7 +81,7 @@ class _ReviewPageState extends State<ReviewPage> {
                     );
                   }),
                   onChanged: (value) {
-                    _rating = value ?? 1;
+                    rating = value ?? 1;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -89,7 +89,7 @@ class _ReviewPageState extends State<ReviewPage> {
                 TextFormField(
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.top,
-                  controller: _commentController,
+                  controller: commentController,
                   maxLines: 3,
                   decoration: const InputDecoration(
                     labelText: 'Comment',
@@ -114,8 +114,8 @@ class _ReviewPageState extends State<ReviewPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _addReview(_rating, _commentController.text);
+                if (formKey.currentState!.validate()) {
+                  _addReview(rating, commentController.text);
                   Navigator.of(context).pop();
                 }
               },
