@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 const List<String> list = <String>[
   'E-Waste',
@@ -20,6 +23,11 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
   String dropdownValue = list.first;
   final TextEditingController _dateController =
       TextEditingController(text: "Choose date");
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  late String latitude = '';
+  late String longitude = '';
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -34,6 +42,81 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
         _dateController.text = DateFormat('MMMM d, yyyy').format(picked);
       });
     }
+  }
+
+  Future<void> schedulePickup() async {
+    String wasteType = dropdownValue;
+    String scheduledDate = _dateController.text;
+    String address = addressController.text;
+    String phone = phoneController.text;
+    String description = descriptionController.text;
+    // Validate fields
+    if (scheduledDate == "Choose date" ||
+        address.isEmpty ||
+        phone.isEmpty ||
+        latitude.isEmpty ||
+        longitude.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all required fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      try {
+        await FirebaseFirestore.instance.collection('waste_pickups').add({
+          'wasteType': wasteType,
+          'scheduledDate': scheduledDate,
+          'address': address,
+          'phone': phone,
+          'latitude': latitude,
+          'longitude': longitude,
+          'description': description,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Waste pickup scheduled successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to schedule waste pickup: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 
   @override
@@ -109,28 +192,88 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
                 onTap: () => _selectDate(context),
               ),
               const SizedBox(height: 15),
-              const Text("Location:",
+              const Text("Address:",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               const SizedBox(height: 5),
-              const TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green, width: 1),
+              TextField(
+                cursorColor: Colors.black,
+                controller: addressController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  hintText: 'Enter address',
+                ),
+              ),
+              const SizedBox(height: 15),
+              const Text("Phone number:",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 5),
+              TextField(
+                cursorColor: Colors.black,
+                controller: phoneController,
+                keyboardType: TextInputType.phone, // Show phone keyboard
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter
+                      .digitsOnly, // Allow only numeric input
+                  LengthLimitingTextInputFormatter(
+                      15), // Limit input to 15 characters
+                ],
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  hintText: 'Enter phone number',
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    _getCurrentLocation().then((value) {
+                      latitude = '${value.latitude}';
+                      longitude = '${value.longitude}';
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Location is recorded'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.green.shade600, width: 1),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green, width: 1),
-                    ),
-                    hintText: 'Enter location',
-                    suffixIcon: Icon(Icons.location_on)),
+                  ),
+                  child: Text('Get Current Location',
+                      style: TextStyle(
+                          color: Colors.green[600],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500)),
+                ),
               ),
               const SizedBox(height: 15),
               const Text("Description (optional):",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               const SizedBox(height: 5),
-              const TextField(
-                maxLines: 3, // Allows for multi-line input
-                decoration: InputDecoration(
+              TextField(
+                cursorColor: Colors.black,
+                controller: descriptionController,
+                maxLines: 3,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.green, width: 1),
@@ -146,15 +289,12 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    print('Waste pickup scheduled!');
-                  },
+                  onPressed: schedulePickup,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[600], // Button color
-                    foregroundColor: Colors.white, // Text color
+                    backgroundColor: Colors.green[600],
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          8), // Adjust the border radius here
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text('Schedule Pickup Request',
