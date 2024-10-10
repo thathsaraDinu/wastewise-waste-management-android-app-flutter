@@ -187,10 +187,7 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                                     'Pickup details are missing')),
                                           );
                                         }
-                                      },
-                                      icon: const Icon(Icons.check,
-                                          color: Color.fromARGB(
-                                              255, 0, 0, 0)), // Change the icon
+                                      }, // Change the icon
                                       label: const Text(
                                         "Accept",
                                         style: TextStyle(
@@ -204,7 +201,7 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                             width: 1),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(8),
                                         ),
                                         backgroundColor: const Color.fromARGB(
                                             255, 98, 212, 96),
