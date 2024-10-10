@@ -19,13 +19,13 @@ class _VendorHomePageState extends State<VendorHomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 220,
+            height: 240,
             decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/images/vehicle.jpg"),
                     fit: BoxFit.fill)),
             child: const Padding(
-              padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
+              padding: EdgeInsets.fromLTRB(16, 68, 16, 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -77,7 +77,7 @@ class _VendorHomePageState extends State<VendorHomePage> {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, 18, 16, 8),
             child: Text(
               'My Pickup Requests',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -119,36 +119,18 @@ class _VendorHomePageState extends State<VendorHomePage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
+                                  const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Pickup Request",
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 2, horizontal: 16),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                                color: Colors.green.shade600,
-                                                width: 1)),
-                                        child: Text(
-                                          "Scheduled",
-                                          style: TextStyle(
-                                            color: Colors.green.shade600,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -217,8 +199,8 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         side: const BorderSide(
-                                            color: Color.fromARGB(
-                                                255, 84, 245, 92),
+                                            color:
+                                                Color.fromARGB(255, 50, 84, 52),
                                             width: 1),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
