@@ -31,7 +31,8 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
   Widget build(BuildContext context) {
     final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
 
-    return BackgroundImageWrapper(
+    return 
+    BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

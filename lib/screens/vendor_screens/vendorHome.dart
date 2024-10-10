@@ -4,6 +4,7 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart'; // Imp
 import 'package:waste_wise/screens/vendor_screens/vendorHomePage.dart'; // Vendor Home Page
 import 'package:waste_wise/screens/vendor_screens/vendor_history_page.dart'; // History page
 import 'package:waste_wise/screens/vendor_screens/vendor_profile_page.dart'; // Profile page
+import 'package:waste_wise/screens/vendor_screens/accepted_pickups.dart'; // Import the new Pickups page
 
 class VendorHome extends StatefulWidget {
   const VendorHome({super.key});
@@ -18,6 +19,7 @@ class _VendorHomeState extends State<VendorHome> {
   // Define the pages to navigate to
   final List<Widget> _pages = <Widget>[
     const VendorHomePage(), // Vendor home page (dashboard)
+    const AcceptedPickups(), // Pickups page
     const VendorHistoryPage(), // History page
     const VendorProfilePage(), // Profile page
   ];
@@ -53,6 +55,12 @@ class _VendorHomeState extends State<VendorHome> {
               activeIcon:
                   Icon(Icons.home, size: 30), // Active icon with larger size
               label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.local_shipping_outlined), // Pickups icon
+              activeIcon: Icon(Icons.local_shipping,
+                  size: 30), // Active icon with larger size
+              label: 'Pickups',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.history_outlined),
