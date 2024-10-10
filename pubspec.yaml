@@ -50,6 +50,9 @@ dependencies:
   products_repository:
     path: packages/products_repository
 
+  transaction_repository:
+    path: packages/transaction_repository
+
   url_launcher: ^6.3.1
   flutter_dotenv: ^5.1.0
   flutter_rating_bar: ^4.0.1

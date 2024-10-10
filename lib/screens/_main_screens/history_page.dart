@@ -11,14 +11,14 @@ class HistoryMain extends StatefulWidget {
 class _HistoryMainState extends State<HistoryMain> {
   final List<Map<String, dynamic>> historyData = [
     {
-      "title": "Waste Collection",
+      "title": "Waste Collections",
       "date": DateTime(2024, 9, 1),
       "amount": 25.00,
       "status": "Completed",
-      "transactionId": "TXN12345",
+      "transactionId": "TXN12342",
     },
     {
-      "title": "Waste Collection",
+      "title": "Waste Collections",
       "date": DateTime(2024, 8, 25),
       "amount": 15.00,
       "status": "Completed",
