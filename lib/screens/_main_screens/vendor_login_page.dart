@@ -31,7 +31,7 @@ class _VendorLoginPageState extends State<VendorLoginPage> {
       // Navigate to vendor home screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => VendorHome()),
+        MaterialPageRoute(builder: (context) =>const VendorHome()),
       );
     }
   }

@@ -56,7 +56,6 @@ dependencies:
   image_picker: ^1.1.2
   firebase_storage: ^12.3.3
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,6 +83,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
+    - assets/images/Group_2313.jpg
     - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
