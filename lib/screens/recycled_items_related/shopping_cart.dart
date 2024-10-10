@@ -28,7 +28,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.only(
+                  left: 20.0,
+                  right: 20.0,
+                  top: 20.0,
+                  bottom: 0.0,
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -60,7 +65,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         },
                       ),
                       const SizedBox(
-                          height: 150), // To add some space at the bottom
+                          height: 10), // To add some space at the bottom
                     ],
                   ),
                 ),

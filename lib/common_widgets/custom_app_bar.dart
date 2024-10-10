@@ -21,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0),
         child: AppBar(
-          leading: name == 'WasteWise'
+          leading: name == 'Recycled Products'
               ? null
               : Container(
                   margin: const EdgeInsets.only(left: 10, bottom: 5, top: 5),
@@ -52,14 +52,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(name,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 25.0,
+                      fontSize: 23.0,
                       color: name == 'Details'
                           ? Colors.white
                           : Colors.green[900])),
             ],
           ),
           actions: [
-            if (name == 'WasteWise' || name == 'Details')
+            if (name == 'Recycled Products' || name == 'Details')
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Stack(

@@ -55,6 +55,10 @@ class _ProductDetailsState extends State<ProductDetails> {
           const SizedBox(
             height: 10.0,
           ),
+          ratingstars(item),
+          const SizedBox(
+            height: 10.0,
+          ),
           Text(
             '${item.price} LKR',
             style: const TextStyle(
@@ -65,10 +69,7 @@ class _ProductDetailsState extends State<ProductDetails> {
           const SizedBox(
             height: 10.0,
           ),
-          ratingstars(item),
-          const SizedBox(
-            height: 10.0,
-          ),
+          
           Text(
             item.longDescription,
             style: const TextStyle(
