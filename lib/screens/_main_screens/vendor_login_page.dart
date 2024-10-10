@@ -3,7 +3,7 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:waste_wise/screens/vendor_screens/vendorHome.dart';
 
 class VendorLoginPage extends StatefulWidget {
-  const VendorLoginPage({super.key});
+  const VendorLoginPage({Key? key}) : super(key: key);
 
   @override
   State<VendorLoginPage> createState() => _VendorLoginPageState();

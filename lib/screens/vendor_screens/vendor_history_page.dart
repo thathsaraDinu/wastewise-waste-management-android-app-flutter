@@ -3,7 +3,7 @@ import '../history/transaction_details.dart'; // Import the TransactionDetails w
 import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 
 class VendorHistoryPage extends StatefulWidget {
-  const VendorHistoryPage({super.key});
+  const VendorHistoryPage({Key? key}) : super(key: key);
 
   @override
   State<VendorHistoryPage> createState() => _VendorHistoryPageState();

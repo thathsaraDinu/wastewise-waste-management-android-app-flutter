@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import this for changing the system UI
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:waste_wise/screens/vendor_screens/waste_pickup_schedule_details.dart';
 
 class VendorHomePage extends StatefulWidget {
-  const VendorHomePage({super.key});
+  const VendorHomePage({Key? key}) : super(key: key);
 
   @override
   State<VendorHomePage> createState() => _VendorHomePageState();
@@ -12,6 +13,15 @@ class VendorHomePage extends StatefulWidget {
 class _VendorHomePageState extends State<VendorHomePage> {
   @override
   Widget build(BuildContext context) {
+    // Set the status bar color to black
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        // Change the status bar color to black
+        statusBarIconBrightness:
+            Brightness.dark, // White icons for dark status bar
+      ),
+    );
+
     return Scaffold(
       backgroundColor: Colors.transparent, // Make the background transparent
       body: Column(
@@ -21,8 +31,12 @@ class _VendorHomePageState extends State<VendorHomePage> {
           Container(
             height: 240,
             decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
                 image: DecorationImage(
-                    image: AssetImage("assets/images/vehicle.jpg"),
+                    image: AssetImage("assets/images/vendortruck.jpg"),
                     fit: BoxFit.fill)),
             child: const Padding(
               padding: EdgeInsets.fromLTRB(16, 68, 16, 16),
@@ -43,9 +57,9 @@ class _VendorHomePageState extends State<VendorHomePage> {
                       Row(
                         children: [
                           Text(
-                            "Manage your pickup requests",
+                            "Manage your Waste pickups",
                             style: TextStyle(
-                                color: Color.fromARGB(255, 117, 117, 117),
+                                color: Color.fromARGB(255, 0, 0, 0),
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           )

@@ -3,7 +3,7 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:waste_wise/screens/vendor_screens/vendorHome.dart';
 
 class VendorRegisterPage extends StatefulWidget {
-  const VendorRegisterPage({super.key});
+  const VendorRegisterPage({Key? key}) : super(key: key);
 
   @override
   State<VendorRegisterPage> createState() => _VendorRegisterPageState();
@@ -32,7 +32,7 @@ class _VendorRegisterPageState extends State<VendorRegisterPage> {
       // Navigate to vendor home screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const VendorHome()),
+        MaterialPageRoute(builder: (context) => VendorHome()),
       );
     }
   }

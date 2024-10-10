@@ -379,7 +379,7 @@ class _WastePickupScheduleUpdateFormState
 class ImageDisplay extends StatelessWidget {
   final String? imageUrl;
 
-  const ImageDisplay({super.key, this.imageUrl});
+  const ImageDisplay({Key? key, this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

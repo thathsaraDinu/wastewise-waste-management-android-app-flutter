@@ -215,9 +215,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   // Payment Method Options (Google Pay, Apple Pay, PayPal)
   Widget _buildPaymentMethodOptions() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
+      children: const [
         Icon(Icons.g_mobiledata, size: 50),
         Icon(Icons.apple, size: 50), // Increased icon size
         Icon(Icons.payment, size: 50), // Increased icon size
