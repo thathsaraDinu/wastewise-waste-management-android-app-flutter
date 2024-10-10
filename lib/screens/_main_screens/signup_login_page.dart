@@ -63,7 +63,7 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
   void _navigateToVendorLogin() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VendorLoginPage()),
+      MaterialPageRoute(builder: (context) => const VendorLoginPage()),
     );
   }
 
@@ -71,7 +71,7 @@ class _SignupLoginPageState extends State<SignupLoginPage> {
   void _navigateToVendorRegister() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VendorRegisterPage()),
+      MaterialPageRoute(builder: (context) => const VendorRegisterPage()),
     );
   }
 
