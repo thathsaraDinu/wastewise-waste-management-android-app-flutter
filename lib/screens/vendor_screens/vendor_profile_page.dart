@@ -31,88 +31,127 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
   Widget build(BuildContext context) {
     final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
 
-    return 
-    BackgroundImageWrapper(
+    return BackgroundImageWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: const Text('Vendor Profile'),
           backgroundColor: Colors.green[600],
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                // Add search functionality if needed
+              },
+            ),
+          ],
         ), // Background color
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0), // Padding for the page
             child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Center content vertically
+              mainAxisAlignment: MainAxisAlignment.center, // Center content
               children: [
-                // User information card
+                // Profile Icon with hardcoded name and email
+                const CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey, // Placeholder background
+                  child: Icon(
+                    Icons.person, // Profile icon
+                    size: 60,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16), // Space between avatar and text
+                const Text(
+                  'Eshan Nayanapriya', // Hardcoded Name
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8), // Space between name and email
+                const Text(
+                  'eshan@email.com', // Hardcoded Email
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+                // Spacing before account settings
+
+                // User information card (Removed StreamBuilder as it's not needed)
+
+                const SizedBox(height: 30), // Spacing before settings
+
+                // Settings Section
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: StreamBuilder<MyUser>(
-                      stream: userRepo.user, // Listening for vendor user data
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Text(
-                              'Error: ${snapshot.error}'); // Show error if any
-                        } else if (!snapshot.hasData) {
-                          return const Text(
-                              'No user data available'); // Handle no data case
-                        }
+                  child: Column(
+                    children: [
+                      // Settings option with icon
+                      ListTile(
+                        leading:
+                            const Icon(Icons.settings, color: Colors.black),
+                        title: const Text('Settings'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Action for settings option
+                        },
+                      ),
+                      const Divider(),
 
-                        MyUser user = snapshot.data!; // Vendor data
+                      // Username option with icon
+                      ListTile(
+                        leading: const Icon(Icons.person, color: Colors.black),
+                        title: const Text('Username'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Action for username option
+                        },
+                      ),
+                      const Divider(),
 
-                        return const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Name: Eshan Nayanapriya', // Display vendor name
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10), // Spacing
-                            Text(
-                              'Email: eshan@gmail.com', // Display vendor email
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                      // Password option with icon
+                      ListTile(
+                        leading: const Icon(Icons.lock, color: Colors.black),
+                        title: const Text('Password'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Action for password option
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 30), // Spacing
-                ElevatedButton(
-                  onPressed: () {
-                    _signOut(userRepo); // Call sign out when button is pressed
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[600], // Button color
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+
+                const SizedBox(height: 30), // Spacing before logout button
+
+                // Logout Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _showLogoutConfirmation(userRepo); // Show logout dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent, // Logout button color
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Logout',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
+                    child: const Text(
+                      'Logout',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -121,6 +160,37 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  // Logout Confirmation Dialog
+  void _showLogoutConfirmation(FirebaseUserRepo userRepo) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _signOut(userRepo); // Call sign out method
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent, // Button color
+              ),
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

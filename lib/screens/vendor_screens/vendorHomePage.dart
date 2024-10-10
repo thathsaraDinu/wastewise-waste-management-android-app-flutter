@@ -16,7 +16,6 @@ class _VendorHomePageState extends State<VendorHomePage> {
     // Set the status bar color to black
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        // Change the status bar color to black
         statusBarIconBrightness:
             Brightness.dark, // White icons for dark status bar
       ),
@@ -31,13 +30,15 @@ class _VendorHomePageState extends State<VendorHomePage> {
           Container(
             height: 240,
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                image: DecorationImage(
-                    image: AssetImage("assets/images/vendortruck.jpg"),
-                    fit: BoxFit.fill)),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+              image: DecorationImage(
+                image: AssetImage("assets/images/vendortruck.jpg"),
+                fit: BoxFit.fill,
+              ),
+            ),
             child: const Padding(
               padding: EdgeInsets.fromLTRB(16, 68, 16, 16),
               child: Column(
@@ -69,22 +70,23 @@ class _VendorHomePageState extends State<VendorHomePage> {
                   ),
                   TextField(
                     decoration: InputDecoration(
-                        hintText: 'Search',
-                        fillColor: Colors.white,
-                        filled: true,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                          borderSide: BorderSide(color: Colors.green),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10)),
+                      hintText: 'Search',
+                      fillColor: Colors.white,
+                      filled: true,
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: Colors.green),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    ),
                   ),
                 ],
               ),
@@ -173,40 +175,23 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 1),
+                                  const SizedBox(height: 0),
                                   // Accept Button on the right side
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: OutlinedButton.icon(
                                       onPressed: () {
-                                        var pickupData = pickup.data()
-                                            as Map<String, dynamic>?;
-
-                                        if (pickupData != null) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WastePickupScheduleDetails(
-                                                      pickup: pickupData,
-                                                      documentId: pickup.id),
-                                            ),
-                                          );
-                                        } else {
-                                          // Handle the case where pickupData is null
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text(
-                                                    'Pickup details are missing')),
-                                          );
-                                        }
-                                      }, // Change the icon
+                                        // Show confirmation dialog
+                                        _showConfirmationDialog(
+                                            documentId, pickup);
+                                      },
+                                      icon: const Icon(Icons.check,
+                                          color: Colors.black),
                                       label: const Text(
                                         "Accept",
                                         style: TextStyle(
-                                            color: Color.fromARGB(255, 0, 0,
-                                                0)), // Change the button text
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                        ),
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         side: const BorderSide(
@@ -237,5 +222,81 @@ class _VendorHomePageState extends State<VendorHomePage> {
         ],
       ),
     );
+  }
+
+  /// Function to show a confirmation dialog when the vendor presses "Accept"
+  void _showConfirmationDialog(
+      String documentId, QueryDocumentSnapshot pickup) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Acceptance'),
+          content: const Text(
+              'Are you sure you want to accept this pickup request?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Dismiss the dialog
+
+                // Call the function to update status
+                await _acceptPickupRequest(documentId);
+
+                // Navigate to details page
+                var pickupData = pickup.data() as Map<String, dynamic>?;
+                if (pickupData != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WastePickupScheduleDetails(
+                        pickup: pickupData,
+                        documentId: pickup.id,
+                      ),
+                    ),
+                  );
+                } else {
+                  // Handle the case where pickupData is null
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Pickup details are missing')),
+                  );
+                }
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Function to accept a pickup request by updating the `status` field in Firestore
+  Future<void> _acceptPickupRequest(String documentId) async {
+    try {
+      // Update the Firestore document by adding or updating the `status` field
+      await FirebaseFirestore.instance
+          .collection('waste_pickups')
+          .doc(documentId)
+          .update({
+        'status': 'accepted', // Add or update the `status` field to "accepted"
+        'updatedAt': FieldValue
+            .serverTimestamp(), // Optionally add a timestamp when updated
+      });
+
+      // Show a success message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pickup request accepted!')),
+      );
+    } catch (e) {
+      // Handle errors here
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error accepting request: ${e.toString()}')),
+      );
+    }
   }
 }
