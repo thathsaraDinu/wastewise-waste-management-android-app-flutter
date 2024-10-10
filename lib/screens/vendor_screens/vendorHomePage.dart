@@ -173,7 +173,7 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 1),
                                   // Accept Button on the right side
                                   Align(
                                     alignment: Alignment.centerRight,
