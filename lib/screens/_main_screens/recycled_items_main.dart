@@ -117,7 +117,7 @@ class RecycledItemsMainState extends State<RecycledItemsMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: const CustomAppBar(name: 'WasteWise'),
+      appBar: const CustomAppBar(name: 'Recycled Products'),
       body: GestureDetector(
         onTap: () {
           _focusNode.unfocus(); // Unfocus TextField when tapping outside
@@ -336,6 +336,7 @@ class RecycledItemsMainState extends State<RecycledItemsMain> {
                           },
                         ),
                 ),
+                const SizedBox(height: 20.0),
               ],
             ),
           ),
