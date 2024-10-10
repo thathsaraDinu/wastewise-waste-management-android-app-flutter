@@ -4,7 +4,7 @@ import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
 import 'package:provider/provider.dart'; // Import for dependency injection
 
 class VendorProfilePage extends StatefulWidget {
-  const VendorProfilePage({Key? key}) : super(key: key);
+  const VendorProfilePage({super.key});
 
   @override
   State<VendorProfilePage> createState() => _VendorProfilePageState();
