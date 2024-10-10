@@ -221,7 +221,7 @@ class _WastePickupScheduleDetailsState
 class ImageDisplay extends StatelessWidget {
   final String? imageUrl;
 
-  const ImageDisplay({Key? key, this.imageUrl}) : super(key: key);
+  const ImageDisplay({super.key, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

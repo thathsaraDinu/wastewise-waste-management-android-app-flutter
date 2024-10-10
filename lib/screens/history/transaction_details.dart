@@ -4,8 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class TransactionDetails extends StatefulWidget {
   final Map<String, dynamic> transaction;
 
-  const TransactionDetails({Key? key, required this.transaction})
-      : super(key: key);
+  const TransactionDetails({super.key, required this.transaction});
 
   @override
   _TransactionDetailsState createState() => _TransactionDetailsState();
@@ -63,7 +62,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
             const SizedBox(height: 10),
             TextField(
               maxLines: 3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Your Feedback',
                 border: OutlineInputBorder(),
                 hintText: 'Write your feedback here...',

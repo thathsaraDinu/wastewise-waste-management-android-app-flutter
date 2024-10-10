@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:waste_wise/screens/vendor_screens/waste_pickup_schedule_details.dart';
 
 class VendorHomePage extends StatefulWidget {
-  const VendorHomePage({Key? key}) : super(key: key);
+  const VendorHomePage({super.key});
 
   @override
   State<VendorHomePage> createState() => _VendorHomePageState();
