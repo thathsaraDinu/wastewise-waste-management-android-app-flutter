@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:transaction_repository/transaction_repository.dart';
+import 'package:waste_wise/screens/vendor_screens/vendorHome.dart';
 
 class WastePickupScheduleDetails extends StatefulWidget {
   final Map<String, dynamic> pickup;
@@ -190,6 +192,45 @@ class _WastePickupScheduleDetailsState
                   ),
                 ],
               ),
+              // Add a button to complete the payment
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CompleteOrderDialog(
+                              wasteType: widget.pickup['wasteType'],
+                              documentId: widget.documentId,
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.payment, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            "Complete Order",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // End of the button to complete the payment
             ],
           ),
         ),
@@ -215,5 +256,206 @@ class ImageDisplay extends StatelessWidget {
                 fit: BoxFit.fill, // Adjusts how the image fits
               )
             : const Text("No image available", style: TextStyle(fontSize: 16)));
+  }
+}
+
+// Complete Order Dialog
+class CompleteOrderDialog extends StatefulWidget {
+  final String wasteType;
+  final String documentId;
+
+  const CompleteOrderDialog({
+    Key? key,
+    required this.wasteType,
+    required this.documentId,
+  }) : super(key: key);
+
+  @override
+  _CompleteOrderDialogState createState() => _CompleteOrderDialogState();
+}
+// End of the Complete Order Dialog
+
+// Add the _showCompleteOrderDialog method
+class _CompleteOrderDialogState extends State<CompleteOrderDialog> {
+  final TextEditingController _pricePerKgController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  double _totalCost = 0.0;
+  bool _isLoading = false;
+
+  final FirebaseTransactions _firebaseTransactions = FirebaseTransactions();
+
+  void _calculateTotalCost() {
+    final double pricePerKg = double.tryParse(_pricePerKgController.text) ?? 0;
+    final double weight = double.tryParse(_weightController.text) ?? 0;
+    setState(() {
+      _totalCost = pricePerKg * weight;
+    });
+  }
+
+  Future<void> _saveTransaction() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final transaction = TransactionsModel(
+        transactionId: widget.documentId,
+        name: widget.wasteType,
+        pricePerKg: double.tryParse(_pricePerKgController.text) ?? 0,
+        weight: double.tryParse(_weightController.text) ?? 0,
+        value: _totalCost,
+        note: _noteController.text,
+        requestId: widget.documentId,
+        timestamp: DateTime.now(),
+      );
+
+      // Save the transaction using the FirebaseTransactions service
+      await _firebaseTransactions.saveTransaction(transaction);
+
+      // Show the success dialog with transaction data
+      _showSuccessDialog(transaction);
+    } catch (e) {
+      // Handle error (show a snackbar or dialog)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save transaction: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showSuccessDialog(TransactionsModel transaction) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Transaction Successful"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Waste Type: ${transaction.name}"),
+              Text("Weight: ${transaction.weight} Kg"),
+              Text("Total Cost: LKR. ${transaction.value}"),
+              Text("Note: ${transaction.note}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the success dialog
+                Navigator.pop(context); // Close the CompleteOrderDialog
+
+                // Navigate to History page in the bottom navigation bar
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const VendorHome(
+                          selectedIndex: 2)), // Assuming index 1 is History
+                  (route) =>
+                      false, // This removes all previous routes from the stack
+                );
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Complete Order for ${widget.wasteType}",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.green[600],
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _pricePerKgController,
+              decoration: const InputDecoration(
+                labelText: 'Price per Kg',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (_) => _calculateTotalCost(),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _weightController,
+              decoration: const InputDecoration(
+                labelText: 'Weight (Kg)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (_) => _calculateTotalCost(),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _noteController,
+              decoration: const InputDecoration(
+                labelText: 'Note',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Total Cost: LKR. $_totalCost",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _saveTransaction,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[600],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Proceed to Payment',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pricePerKgController.dispose();
+    _weightController.dispose();
+    _noteController.dispose();
+    super.dispose();
   }
 }
