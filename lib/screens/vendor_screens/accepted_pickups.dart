@@ -1,205 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:waste_wise/screens/vendor_screens/waste_pickup_schedule_details.dart';
-import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/screens/vendor_screens/vendorHomePage.dart'; // Import VendorHomePage
 
-class AcceptedPickups extends StatelessWidget {
-  const AcceptedPickups({Key? key}) : super(key: key);
+class AcceptWasteDetails extends StatefulWidget {
+  final Map<String, dynamic> pickup;
+  final String documentId;
+
+  const AcceptWasteDetails({
+    Key? key,
+    required this.pickup,
+    required this.documentId,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return BackgroundImageWrapper(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text('Accepted Pickups'),
-          backgroundColor: Colors.green[600],
-        ),
-        body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('waste_pickups')
-              .where('status', isEqualTo: 'accepted') // Filter accepted pickups
-              .orderBy('timestamp', descending: true) // Order by most recent
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
+  State<AcceptWasteDetails> createState() => _AcceptWasteDetailsState();
+}
 
-            var acceptedPickups = snapshot.data!.docs;
+class _AcceptWasteDetailsState extends State<AcceptWasteDetails> {
+  Future<void> _openMap(String lat, String long) async {
+    String googleURL =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$long';
 
-            // Show the message if there are no accepted pickups
-            if (acceptedPickups.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.local_shipping, size: 80, color: Colors.green),
-                    SizedBox(height: 20),
-                    Text(
-                      'No Accepted Pickups Yet!',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'All your accepted pickups will show up here.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            // Otherwise, show the list of accepted pickups
-            return ListView.builder(
-              itemCount: acceptedPickups.length,
-              itemBuilder: (context, index) {
-                var pickup = acceptedPickups[index];
-                String documentId = pickup.id; // Document ID
-
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      border:
-                          Border.all(color: Colors.green.shade600, width: 1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Accepted Pickup",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_today,
-                                  size: 18, color: Colors.black),
-                              const SizedBox(width: 8),
-                              Text(
-                                pickup['scheduledDate'],
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(Icons.delete_outline,
-                                  size: 18, color: Colors.black),
-                              const SizedBox(width: 8),
-                              Text(
-                                pickup['wasteType'],
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Row for Decline and View Details Buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Decline Button (left side)
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  _showDeclineConfirmationDialog(
-                                      context, pickup, documentId);
-                                },
-                                label: const Text(
-                                  "Decline",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: Color.fromARGB(0, 244, 67, 54),
-                                      width: 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor:
-                                      const Color.fromARGB(210, 182, 35, 25),
-                                ),
-                              ),
-
-                              // View Details Button (right side)
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  var pickupData =
-                                      pickup.data() as Map<String, dynamic>?;
-                                  if (pickupData != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            WastePickupScheduleDetails(
-                                                pickup: pickupData,
-                                                documentId: pickup.id),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Pickup details are missing')),
-                                    );
-                                  }
-                                },
-                                label: const Text(
-                                  "View Details",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: Color.fromARGB(0, 76, 175, 79),
-                                      width: 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 118, 255, 123),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
+    await canLaunchUrlString(googleURL)
+        ? await launchUrlString(googleURL)
+        : throw 'Could not launch $googleURL';
   }
 
-  /// Function to show a confirmation dialog for declining a pickup request
-  void _showDeclineConfirmationDialog(
-      BuildContext context, QueryDocumentSnapshot pickup, String documentId) {
+  /// Function to accept a pickup request by updating the `status` field in Firestore
+  Future<void> _acceptPickupRequest() async {
+    try {
+      // Update the Firestore document to change the status to "accepted"
+      await FirebaseFirestore.instance
+          .collection('waste_pickups')
+          .doc(widget.documentId)
+          .update({
+        'status': 'accepted', // Set the status to "accepted"
+      });
+
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
+
+      // Show a message confirming the acceptance
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pickup request accepted!')),
+      );
+
+      // Add a slight delay before navigating to VendorHomePage
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
+
+      // Navigate to VendorHomePage
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => VendorHomePage()),
+      // );
+    } catch (e) {
+      // Check if the widget is still mounted before using the context
+      if (!mounted) return;
+
+      // Handle errors here
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error accepting request: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _showConfirmationDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Decline'),
+          title: const Text('Confirm Pickup'),
           content: const Text(
-              'Are you sure you want to decline this pickup request?'),
+              'Are you sure you want to accept this pickup request?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -208,10 +85,9 @@ class AcceptedPickups extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.of(context).pop(); // Dismiss the dialog
-                await _declinePickup(
-                    context, pickup, documentId); // Call the decline method
+                _acceptPickupRequest(); // Call the function to accept the request
               },
               child: const Text('Confirm'),
             ),
@@ -221,25 +97,223 @@ class AcceptedPickups extends StatelessWidget {
     );
   }
 
-  /// Function to decline a pickup request by updating the `status` field in Firestore
-  Future<void> _declinePickup(BuildContext context,
-      QueryDocumentSnapshot pickup, String documentId) async {
-    try {
-      // Reset the status to the previous one or "pending"
-      await FirebaseFirestore.instance
-          .collection('waste_pickups')
-          .doc(documentId)
-          .update({
-        'status': 'pending', // Reset to previous status
-      });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: const Text(
+          'Pickup Schedule Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.green[600],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Scheduled Pickup Date:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['scheduledDate'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Waste Type:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['wasteType'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Address:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['address'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Phone:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.pickup['phone'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Snapshot:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              ImageDisplay(imageUrl: widget.pickup['imageUrl']),
+              const Divider(
+                thickness: 1,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Additional Details:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                (widget.pickup['description'] != null &&
+                        widget.pickup['description']
+                            .toString()
+                            .trim()
+                            .isNotEmpty)
+                    ? widget.pickup['description'].toString()
+                    : 'No additional details provided',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _showConfirmationDialog,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[600],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Accept Request",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        String latitude = widget.pickup['latitude'];
+                        String longitude = widget.pickup['longitude'];
+                        _openMap(latitude, longitude);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[600],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.map, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            "View Location",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pickup request declined.')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error declining request: $e')),
-      );
-    }
+// Add the ImageDisplay component here
+class ImageDisplay extends StatelessWidget {
+  final String? imageUrl;
+
+  const ImageDisplay({Key? key, this.imageUrl}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: imageUrl != null && imageUrl!.isNotEmpty
+          ? Image.network(
+              imageUrl!,
+              width: double.infinity, // Set width as needed
+              height: 280, // Set height as needed
+              fit: BoxFit.fill, // Adjusts how the image fits
+            )
+          : const Text("No image available", style: TextStyle(fontSize: 16)),
+    );
   }
 }
