@@ -332,36 +332,135 @@ class _CompleteOrderDialogState extends State<CompleteOrderDialog> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Transaction Successful"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Waste Type: ${transaction.name}"),
-              Text("Weight: ${transaction.weight} Kg"),
-              Text("Total Cost: LKR. ${transaction.value}"),
-              Text("Note: ${transaction.note}"),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the success dialog
-                Navigator.pop(context); // Close the CompleteOrderDialog
-
-                // Navigate to History page in the bottom navigation bar
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const VendorHome(
-                          selectedIndex: 2)), // Assuming index 1 is History
-                  (route) =>
-                      false, // This removes all previous routes from the stack
-                );
-              },
-              child: const Text("OK"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          contentPadding: const EdgeInsets.all(16.0),
+          titlePadding: const EdgeInsets.only(top: 16.0),
+          content: Container(
+            width: 320,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Column(
+                  children: [
+                    const Icon(
+                      Icons.check_circle_outline,
+                      size: 100,
+                      color: Colors.green,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Transaction Successful",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[700],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Transaction Details
+                Text(
+                  "Waste Type:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  transaction.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Weight:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "${transaction.weight} Kg",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Total Cost:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "LKR. ${transaction.value}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Note:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  transaction.note.isNotEmpty
+                      ? transaction.note
+                      : "No additional note provided",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Action Button
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the success dialog
+                    Navigator.pop(context); // Close the CompleteOrderDialog
+                    // Navigate to History page in the bottom navigation bar
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const VendorHome(selectedIndex: 2),
+                      ),
+                      (route) =>
+                          false, // This removes all previous routes from the stack
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[600],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                  ),
+                  child: const Text(
+                    "Go to History",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -386,26 +485,39 @@ class _CompleteOrderDialogState extends State<CompleteOrderDialog> {
               ),
             ),
             const SizedBox(height: 16),
+            // Price per Kg
             TextField(
               controller: _pricePerKgController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Price per Kg',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                errorText:
+                    _priceError.isEmpty ? null : _priceError, // Display error
               ),
               keyboardType: TextInputType.number,
-              onChanged: (_) => _calculateTotalCost(),
+              onChanged: (_) {
+                _calculateTotalCost();
+                _validatePrice();
+              },
             ),
             const SizedBox(height: 16),
+            // Weight (Kg)
             TextField(
               controller: _weightController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Weight (Kg)',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                errorText:
+                    _weightError.isEmpty ? null : _weightError, // Display error
               ),
               keyboardType: TextInputType.number,
-              onChanged: (_) => _calculateTotalCost(),
+              onChanged: (_) {
+                _calculateTotalCost();
+                _validateWeight();
+              },
             ),
             const SizedBox(height: 16),
+            // Note
             TextField(
               controller: _noteController,
               decoration: const InputDecoration(
@@ -430,7 +542,7 @@ class _CompleteOrderDialogState extends State<CompleteOrderDialog> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: _saveTransaction,
+                          onPressed: _validateForm,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[600],
                             shape: RoundedRectangleBorder(
@@ -449,6 +561,40 @@ class _CompleteOrderDialogState extends State<CompleteOrderDialog> {
         ),
       ),
     );
+  }
+
+// Validation logic
+  String _priceError = '';
+  String _weightError = '';
+
+  void _validatePrice() {
+    final price = double.tryParse(_pricePerKgController.text);
+    if (price == null || price <= 0) {
+      _priceError = 'Please enter a valid price greater than 0';
+    } else {
+      _priceError = '';
+    }
+  }
+
+  void _validateWeight() {
+    final weight = double.tryParse(_weightController.text);
+    if (weight == null || weight <= 0) {
+      _weightError = 'Please enter a valid weight greater than 0';
+    } else {
+      _weightError = '';
+    }
+  }
+
+  void _validateForm() {
+    _validatePrice();
+    _validateWeight();
+
+    if (_priceError.isEmpty && _weightError.isEmpty) {
+      _saveTransaction();
+    } else {
+      // Show an alert or any other indication of validation failure
+      setState(() {}); // Trigger rebuild to show errors
+    }
   }
 
   @override

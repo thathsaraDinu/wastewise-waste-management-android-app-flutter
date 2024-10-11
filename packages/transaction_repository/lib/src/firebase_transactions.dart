@@ -4,6 +4,23 @@ import 'package:transaction_repository/transaction_repository.dart';
 class FirebaseTransactions {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  final CollectionReference transactionsCollection =
+      FirebaseFirestore.instance.collection('transactions');
+
+  // Get a specific document reference by transaction ID
+  DocumentReference getTransactionDocument(String transactionId) {
+    return transactionsCollection.doc(transactionId);
+  }
+
+  Future<List<TransactionsModel>> _fetchTransactions() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('transactions').get();
+    return snapshot.docs
+        .map((doc) => TransactionsModel.fromDocument(
+            doc.data() as Map<String, Object?>, doc.id))
+        .toList();
+  }
+
   // Save a transaction to Firebase
   Future<void> saveTransaction(TransactionsModel transaction) async {
     try {
@@ -34,6 +51,37 @@ class FirebaseTransactions {
       }).toList();
     } catch (e) {
       throw Exception('Failed to fetch transactions: $e');
+    }
+  }
+
+  // Update feedback, ratings, and status of a transaction
+  Future<void> updateTransaction(
+    String transactionId, {
+    String? feedback,
+    double? rating,
+    String? status,
+  }) async {
+    try {
+      // Get a reference to the document with the given transactionId
+      DocumentReference docRef =
+          _firestore.collection('transactions').doc(transactionId);
+
+      // Prepare the data to update
+      Map<String, dynamic> updatedData = {};
+      if (feedback != null) {
+        updatedData['feedback'] = feedback; // Update feedback
+      }
+      if (rating != null) {
+        updatedData['rating'] = rating; // Update rating
+      }
+      if (status != null) {
+        updatedData['status'] = status; // Update status
+      }
+
+      // Update the document
+      await docRef.update(updatedData);
+    } catch (e) {
+      throw Exception('Failed to update transaction: $e');
     }
   }
 }
