@@ -78,7 +78,7 @@ class _TransactionMainState extends State<TransactionMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
           // Custom Header Section with Background Image

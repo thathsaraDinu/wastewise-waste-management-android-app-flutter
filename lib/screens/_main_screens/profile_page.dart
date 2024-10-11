@@ -34,7 +34,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
 
     return Scaffold(
-      
       backgroundColor: Colors.transparent,
       body: Center(
         child: Column(
