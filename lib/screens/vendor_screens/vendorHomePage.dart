@@ -1,10 +1,11 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for changing the system UI
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:waste_wise/screens/vendor_screens/accept_waste_details.dart';
 
 class VendorHomePage extends StatefulWidget {
-  const VendorHomePage({Key? key}) : super(key: key);
+  const VendorHomePage({super.key});
 
   @override
   State<VendorHomePage> createState() => _VendorHomePageState();
