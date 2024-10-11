@@ -53,16 +53,6 @@ class _HomeMainState extends State<HomeMain> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.green[600],
-        shape: const CircleBorder(),
-        elevation: 6.0,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,10 +69,10 @@ class _HomeMainState extends State<HomeMain> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
+                  const Column(
                     children: [
                       Row(
-                        children: const [
+                        children: [
                           Text(
                             "Hi, Nipun",
                             style: TextStyle(
@@ -91,7 +81,7 @@ class _HomeMainState extends State<HomeMain> {
                         ],
                       ),
                       Row(
-                        children: const [
+                        children: [
                           Text(
                             "Welcome",
                             style: TextStyle(
@@ -111,23 +101,23 @@ class _HomeMainState extends State<HomeMain> {
                         searchQuery = value;
                       });
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Search vendors or waste type...',
                       fillColor: Colors.white,
                       filled: true,
-                      prefixIcon: const Icon(Icons.search),
-                      border: const OutlineInputBorder(
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
-                      enabledBorder: const OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                         borderSide: BorderSide(color: Colors.grey),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                         borderSide: BorderSide(color: Colors.green),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
                     ),
                   ),
                 ],
