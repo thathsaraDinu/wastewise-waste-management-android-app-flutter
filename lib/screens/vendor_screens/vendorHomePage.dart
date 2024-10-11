@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for changing the system UI
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:waste_wise/screens/vendor_screens/waste_pickup_schedule_details.dart';
+import 'package:waste_wise/screens/vendor_screens/accept_waste_details.dart';
 
 class VendorHomePage extends StatefulWidget {
   const VendorHomePage({Key? key}) : super(key: key);
@@ -105,6 +105,10 @@ class _VendorHomePageState extends State<VendorHomePage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('waste_pickups')
+                  .where('status',
+                      isNotEqualTo: 'accepted') // Filter out accepted requests
+                  .orderBy(
+                      'status') // Ensure the orderBy includes the filtered field
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -192,7 +196,7 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                WastePickupScheduleDetails(
+                                                AcceptWasteDetails(
                                                     pickup: pickupData,
                                                     documentId: pickup.id),
                                           ),
@@ -210,7 +214,8 @@ class _VendorHomePageState extends State<VendorHomePage> {
                                     label: const Text(
                                       "ACCEPT",
                                       style: TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0)),
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontSize: 17),
                                     ),
                                     style: OutlinedButton.styleFrom(
                                       side: const BorderSide(
