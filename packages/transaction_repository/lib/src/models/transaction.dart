@@ -11,6 +11,7 @@ class TransactionsModel {
   String status;
   double pricePerKg;
   double weight;
+  DateTime? timestamp;
 
   TransactionsModel({
     required this.transactionId,
@@ -23,6 +24,7 @@ class TransactionsModel {
     this.status = 'pending',
     this.pricePerKg = 0.0,
     this.weight = 0.0,
+    this.timestamp,
   });
 
   static final TransactionsModel empty = TransactionsModel(
@@ -49,6 +51,7 @@ class TransactionsModel {
       status: entity.status,
       pricePerKg: entity.pricePerKg,
       weight: entity.weight,
+      timestamp: entity.timestamp,
     );
   }
 
@@ -65,6 +68,7 @@ class TransactionsModel {
       'status': status,
       'pricePerKg': pricePerKg,
       'weight': weight,
+      'timestamp': timestamp,
     };
   }
 
@@ -81,6 +85,7 @@ class TransactionsModel {
       status: json['status'] as String? ?? 'pending',
       pricePerKg: (json['pricePerKg'] as num?)?.toDouble() ?? 0.0,
       weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+      timestamp: (json['timestamp'] as DateTime?),
     );
   }
 }

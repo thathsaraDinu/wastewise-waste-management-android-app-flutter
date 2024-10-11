@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TransactionsEntity {
   String transactionId;
   String requestId;
@@ -9,6 +11,7 @@ class TransactionsEntity {
   String status;
   double pricePerKg;
   double weight;
+  DateTime timestamp;
 
   TransactionsEntity({
     required this.transactionId,
@@ -21,6 +24,7 @@ class TransactionsEntity {
     this.status = 'pending',
     this.pricePerKg = 0.0,
     this.weight = 0.0,
+    required this.timestamp,
   });
 
   static TransactionsEntity fromDocument(Map<String, Object?> doc,
@@ -36,6 +40,7 @@ class TransactionsEntity {
       status: doc['status'] as String? ?? 'pending',
       pricePerKg: (doc['pricePerKg'] as num?)?.toDouble() ?? 0.0,
       weight: (doc['weight'] as num?)?.toDouble() ?? 0.0,
+      timestamp: (doc['timestamp'] as Timestamp).toDate(),
     );
   }
 }
