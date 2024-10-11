@@ -16,15 +16,13 @@ class _VendorHomePageState extends State<VendorHomePage> {
     // Set the status bar color to black
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        // Change the status bar color to black
         statusBarIconBrightness:
             Brightness.dark, // White icons for dark status bar
       ),
     );
 
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(36, 0, 0, 0), // Make the background transparent
+      backgroundColor: const Color.fromARGB(23, 130, 129, 129),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,11 +103,9 @@ class _VendorHomePageState extends State<VendorHomePage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('waste_pickups')
-                  .where('status',
-                      isNotEqualTo: 'accepted') // Filter out accepted requests
-                  .orderBy(
-                      'status') // Ensure the orderBy includes the filtered field
-                  .orderBy('timestamp', descending: true)
+                  // Temporarily remove this filter to test the query
+                  //.where('status', isNotEqualTo: 'accepted')
+                  .orderBy('timestamp', descending: true) // Order by timestamp
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {

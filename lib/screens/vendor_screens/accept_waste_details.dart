@@ -54,10 +54,10 @@ class _AcceptWasteDetailsState extends State<AcceptWasteDetails> {
       if (!mounted) return;
 
       // Navigate to VendorHomePage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => VendorHomePage()),
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => VendorHomePage()),
+      // );
     } catch (e) {
       // Check if the widget is still mounted before using the context
       if (!mounted) return;
