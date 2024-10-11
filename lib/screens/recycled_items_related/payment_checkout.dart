@@ -56,9 +56,79 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
-                    onPressed: () {
+                   onPressed: () {
                       // Handle confirm button press
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  // Success Image
+                                  Image.asset(
+                                    'assets/images/AnimationSuccess.gif', // Ensure this image exists in your assets
+                                    height: 100,
+                                    width: 100,
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Success Message
+                                  const Text(
+                                    'Order Confirmed!',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Description
+                                  const Text(
+                                    'Your order has been placed successfully.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Close Button
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                    ),
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
+
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[700],
                       foregroundColor: Colors.white,
