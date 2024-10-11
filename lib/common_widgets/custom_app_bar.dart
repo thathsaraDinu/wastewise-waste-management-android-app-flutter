@@ -21,9 +21,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0),
         child: AppBar(
-          leading: name == 'Recycled Products'
+          leading: name == 'Recycled Products' || name == 'Profile'
               ? null
               : Container(
+                
                   margin: const EdgeInsets.only(left: 10, bottom: 5, top: 5),
                   child: IconButton(
                     iconSize: 20,
@@ -49,13 +50,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           foregroundColor: Colors.black,
           title: Row(
             children: [
-              Text(name,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 23.0,
-                      color: name == 'Details'
-                          ? Colors.white
-                          : Colors.green[900])),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(name,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 23.0,
+                        
+                        color: name == 'Details'
+                            ? Colors.white
+                            : Colors.green[900])),
+              ),
             ],
           ),
           actions: [

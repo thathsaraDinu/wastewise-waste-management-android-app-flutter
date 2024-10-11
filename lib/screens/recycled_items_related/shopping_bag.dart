@@ -44,142 +44,136 @@ class _ShoppingBagPageState extends State<ShoppingBagPage> {
         appBar: const CustomAppBar(
           name: 'Shopping Bag',
         ),
-        body: Stack(
+        body: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // Keeps footer at the bottom
           children: [
-            // Dynamic bottom padding for footer space
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Delivery address section
-                  const AddressCard(),
-                  const SizedBox(height: 10),
-
-                  const SizedBox(height: 10),
-                  ShoppingBagCard(
-                    color: color,
-                    productItem: item,
-                    quantity: quantity,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Single Price",
-                          style: TextStyle(fontSize: 16)),
-                      Text("${singlePrice.toStringAsFixed(2)} LKR",
-                          style: const TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Number of Pieces",
-                          style: TextStyle(fontSize: 16)),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                if (quantity > 1) {
-                                  quantity--;
-                                  updateTotalPrice(); // Update total price
-                                }
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.remove_circle_outline,
-                              size: 30,
-                            ),
-                          ),
-                          Text(
-                            "$quantity",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                quantity++;
-                                updateTotalPrice(); // Update total price
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.add_circle_outline,
-                              size: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Order Total", style: TextStyle(fontSize: 16)),
-                      Text(
-                        "${totalPrice.toStringAsFixed(2)} LKR",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                      height: 80), // Extra space for the fixed footer
-                ],
-              ),
-            ),
-
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(10)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 10),
+                    // Delivery address section
+                    const AddressCard(),
+                    const SizedBox(height: 10),
+
+                    const SizedBox(height: 10),
+                    ShoppingBagCard(
+                      color: color,
+                      productItem: item,
+                      quantity: quantity,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "${totalPrice.toStringAsFixed(2)} LKR",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        const Text("Single Price",
+                            style: TextStyle(fontSize: 16)),
+                        Text("${singlePrice.toStringAsFixed(2)} LKR",
+                            style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Number of Pieces",
+                            style: TextStyle(fontSize: 16)),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (quantity > 1) {
+                                    quantity--;
+                                    updateTotalPrice(); // Update total price
+                                  }
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.remove_circle_outline,
+                                size: 30,
+                              ),
+                            ),
+                            Text(
+                              "$quantity",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  quantity++;
+                                  updateTotalPrice(); // Update total price
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.add_circle_outline,
+                                size: 30,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/checkout',
-                            arguments: totalPrice);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[700],
-                        elevation: 5.0,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30.0, vertical: 12.0),
-                      ),
-                      child: const Text(
-                        "Checkout",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.white,
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Order Total",
+                            style: TextStyle(fontSize: 16)),
+                        Text(
+                          "${totalPrice.toStringAsFixed(2)} LKR",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                      ),
+                      ],
                     ),
+                    const SizedBox(
+                        height: 20), // Extra space for scrollable content
                   ],
                 ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(10)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${totalPrice.toStringAsFixed(2)} LKR",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/checkout',
+                          arguments: totalPrice);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[700],
+                      elevation: 5.0,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 12.0),
+                    ),
+                    child: const Text(
+                      "Checkout",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
