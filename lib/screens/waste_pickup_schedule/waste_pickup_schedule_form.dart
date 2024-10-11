@@ -48,7 +48,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
 
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path); // Get the image as a file
+        _imageFile = File(pickedFile.path);
       });
     }
   }
@@ -75,11 +75,7 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
     String phone = phoneController.text;
     String description = descriptionController.text;
     // Validate fields
-    if (scheduledDate == "Choose date" ||
-        address.isEmpty ||
-        phone.isEmpty ||
-        latitude.isEmpty ||
-        longitude.isEmpty) {
+    if (scheduledDate == "Choose date" || address.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all required fields'),
@@ -260,12 +256,10 @@ class _WastePickupScheduleFormState extends State<WastePickupScheduleForm> {
               TextField(
                 cursorColor: Colors.black,
                 controller: phoneController,
-                keyboardType: TextInputType.phone, // Show phone keyboard
+                keyboardType: TextInputType.phone,
                 inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter
-                      .digitsOnly, // Allow only numeric input
-                  LengthLimitingTextInputFormatter(
-                      15), // Limit input to 15 characters
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(15),
                 ],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),

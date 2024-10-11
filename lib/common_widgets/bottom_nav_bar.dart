@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waste_wise/common_widgets/background_image_wrapper.dart';
+import 'package:waste_wise/screens/_main_screens/home_main.dart';
 import 'package:waste_wise/screens/_main_screens/transaction_page.dart';
 import 'package:waste_wise/screens/_main_screens/profile_page.dart';
 import 'package:waste_wise/screens/_main_screens/recycled_items_main.dart';
@@ -21,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Home Page')),
+    Center(child: HomeMain()),
     Center(child: WastePickupScheduleMain()),
     Center(child: RecycledItemsMain()),
     Center(child: TransactionMain()),

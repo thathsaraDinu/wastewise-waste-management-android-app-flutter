@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_update_form.dart';
 
