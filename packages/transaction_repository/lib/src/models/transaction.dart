@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../entities/entities.dart';
 
 class TransactionsModel {
@@ -85,7 +87,8 @@ class TransactionsModel {
       status: json['status'] as String? ?? 'pending',
       pricePerKg: (json['pricePerKg'] as num?)?.toDouble() ?? 0.0,
       weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
-      timestamp: (json['timestamp'] as DateTime?),
+      // Parse the timestamp as DateTime from Firestore's Timestamp
+      timestamp: (json['timestamp'] as Timestamp?)?.toDate(),
     );
   }
 }
