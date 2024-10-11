@@ -12,7 +12,9 @@ class WastePickupScheduleMain extends StatefulWidget {
 }
 
 class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
-  // Function to delete a pickup request
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   Future<void> _deletePickup(String documentId) async {
     try {
       await FirebaseFirestore.instance
@@ -92,12 +94,12 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
                 image: DecorationImage(
                     image: AssetImage("assets/images/vehicle.jpg"),
                     fit: BoxFit.fill)),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(16, 48, 16, 16),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
+                  const Column(
                     children: [
                       Row(
                         children: [
@@ -122,8 +124,14 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
                     ],
                   ),
                   TextField(
-                    decoration: InputDecoration(
-                        hintText: 'Search',
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value.toLowerCase();
+                      });
+                    },
+                    decoration: const InputDecoration(
+                        hintText: 'Search by Waste Type',
                         fillColor: Colors.white,
                         filled: true,
                         prefixIcon: Icon(Icons.search),
@@ -164,13 +172,19 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
 
                 var pickupData = snapshot.data!.docs;
 
+                // Filter the pickupData based on the search query
+                var filteredData = pickupData.where((pickup) {
+                  var wasteType = pickup['wasteType'].toString().toLowerCase();
+                  return wasteType.contains(_searchQuery);
+                }).toList();
+
                 return SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: List.generate(
-                      pickupData.length,
+                      filteredData.length,
                       (index) {
-                        var pickup = pickupData[index];
+                        var pickup = filteredData[index];
                         String documentId = pickup.id; // Document ID
 
                         return Padding(

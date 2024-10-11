@@ -7,7 +7,9 @@ import 'package:waste_wise/screens/vendor_screens/vendor_profile_page.dart'; // 
 import 'package:waste_wise/screens/vendor_screens/accepted_pickups.dart'; // Import the new Pickups page
 
 class VendorHome extends StatefulWidget {
-  const VendorHome({super.key});
+  final int selectedIndex;
+
+  const VendorHome({Key? key, this.selectedIndex = 0}) : super(key: key);
 
   @override
   State<VendorHome> createState() => _VendorHomeState();
@@ -15,6 +17,12 @@ class VendorHome extends StatefulWidget {
 
 class _VendorHomeState extends State<VendorHome> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex; // Set the initial selected index
+  }
 
   // Define the pages to navigate to
   final List<Widget> _pages = <Widget>[

@@ -31,12 +31,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 padding: const EdgeInsets.only(
                   left: 20.0,
                   right: 20.0,
-                  top: 20.0,
+                  top: 0.0,
                   bottom: 0.0,
                 ),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      const SizedBox(height: 10),
                       const AddressCard(),
                       const SizedBox(height: 10),
                       StreamBuilder<List<CartItem>>(

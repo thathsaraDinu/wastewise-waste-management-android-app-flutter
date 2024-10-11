@@ -14,10 +14,10 @@ class ProductCard extends StatelessWidget {
         elevation: 3,
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           onTap: () {
             FocusScope.of(context).unfocus();
             Navigator.pushNamed(context, '/productpage', arguments: item);
@@ -27,8 +27,8 @@ class ProductCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+                  topLeft: Radius.circular(15.0),
+                  topRight: Radius.circular(15.0),
                 ),
                 child: Hero(
                   tag: 'productimage${item.imageUrls[0]}',

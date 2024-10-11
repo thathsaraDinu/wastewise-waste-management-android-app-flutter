@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:transaction_repository/transaction_repository.dart';
 import 'package:waste_wise/screens/transactions/transaction_details.dart';
 
-class VendorHistoryPage extends StatefulWidget {
-  const VendorHistoryPage({super.key});
+class TransactionMain extends StatefulWidget {
+  const TransactionMain({super.key});
 
   @override
-  State<VendorHistoryPage> createState() => _VendorHistoryPageState();
+  State<TransactionMain> createState() => _TransactionMainState();
 }
 
-class _VendorHistoryPageState extends State<VendorHistoryPage> {
+class _TransactionMainState extends State<TransactionMain> {
   final FirebaseTransactions _firebaseTransactions = FirebaseTransactions();
 
   String searchQuery = '';

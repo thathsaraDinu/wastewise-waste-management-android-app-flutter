@@ -90,11 +90,7 @@ class _WastePickupScheduleUpdateFormState
     String phone = phoneController.text;
     String description = descriptionController.text;
     // Validate fields
-    if (scheduledDate == "Choose date" ||
-        address.isEmpty ||
-        phone.isEmpty ||
-        latitude.isEmpty ||
-        longitude.isEmpty) {
+    if (scheduledDate == "Choose date" || address.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all required fields'),
