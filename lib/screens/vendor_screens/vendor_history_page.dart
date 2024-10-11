@@ -227,7 +227,7 @@ class _VendorHistoryPageState extends State<VendorHistoryPage> {
                                       "Date: ${historyItem['date'].toString().split(' ')[0]}"),
                                 ],
                               ),
-                              const SizedBox(height: 8),
+
                               Row(
                                 children: [
                                   const Text("Status: "),
@@ -248,11 +248,6 @@ class _VendorHistoryPageState extends State<VendorHistoryPage> {
                                   "Document ID: ${historyItem['requestId']}"), // Changed label
                               const SizedBox(height: 16),
                               // "Do Payment" button
-                              ElevatedButton(
-                                onPressed: () => showPaymentDialog(
-                                    historyItem['requestId']!),
-                                child: const Text("Do Payment"),
-                              ),
                             ],
                           ),
                         ),

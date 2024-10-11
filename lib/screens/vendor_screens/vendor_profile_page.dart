@@ -57,11 +57,8 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey, // Placeholder background
-                  child: Icon(
-                    Icons.person, // Profile icon
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                  backgroundImage:
+                      AssetImage('assets/images/avatar.jpg'), // Profile image
                 ),
                 const SizedBox(height: 16), // Space between avatar and text
                 const Text(
