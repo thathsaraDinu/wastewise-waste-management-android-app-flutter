@@ -232,14 +232,8 @@ class AcceptedPickups extends StatelessWidget {
           .update({
         'status': 'pending', // Reset to previous status
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pickup request declined.')),
-      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error declining request: $e')),
-      );
+      // Handle error if needed
     }
   }
 }

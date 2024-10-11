@@ -1,11 +1,10 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for changing the system UI
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:waste_wise/screens/vendor_screens/accept_waste_details.dart';
 
 class VendorHomePage extends StatefulWidget {
-  const VendorHomePage({super.key});
+  const VendorHomePage({Key? key}) : super(key: key);
 
   @override
   State<VendorHomePage> createState() => _VendorHomePageState();
@@ -17,13 +16,15 @@ class _VendorHomePageState extends State<VendorHomePage> {
     // Set the status bar color to black
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
+        // Change the status bar color to black
         statusBarIconBrightness:
             Brightness.dark, // White icons for dark status bar
       ),
     );
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(23, 130, 129, 129),
+      backgroundColor:
+          const Color.fromARGB(36, 0, 0, 0), // Make the background transparent
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,9 +105,11 @@ class _VendorHomePageState extends State<VendorHomePage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('waste_pickups')
-                  // Temporarily remove this filter to test the query
-                  //.where('status', isNotEqualTo: 'accepted')
-                  .orderBy('timestamp', descending: true) // Order by timestamp
+                  .where('status',
+                      isNotEqualTo: 'accepted') // Filter out accepted requests
+                  .orderBy(
+                      'status') // Ensure the orderBy includes the filtered field
+                  .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
