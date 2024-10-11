@@ -1,7 +1,6 @@
 import 'dart:async'; // Import to use Timer
 import 'package:flutter/material.dart';
 import 'package:transaction_repository/transaction_repository.dart';
-import 'package:waste_wise/screens/transactions/transaction_details.dart';
 
 class VendorHistoryPage extends StatefulWidget {
   const VendorHistoryPage({super.key});
@@ -214,15 +213,6 @@ class _VendorHistoryPageState extends State<VendorHistoryPage> {
                       var transaction = filteredTransactions[index];
 
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransactionDetailPage(
-                                  transaction: transaction),
-                            ),
-                          );
-                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Container(
@@ -271,10 +261,10 @@ class _VendorHistoryPageState extends State<VendorHistoryPage> {
                                                       vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: transaction.status ==
-                                                        'Completed'
+                                                        'completed'
                                                     ? Colors.green
                                                     : transaction.status ==
-                                                            'Pending'
+                                                            'pending'
                                                         ? Colors.orange
                                                         : Colors.red,
                                                 borderRadius:

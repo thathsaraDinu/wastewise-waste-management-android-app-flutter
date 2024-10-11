@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TransactionsEntity {
+  String documentId;
   String transactionId;
   String requestId;
   String name;
@@ -14,6 +15,7 @@ class TransactionsEntity {
   DateTime timestamp;
 
   TransactionsEntity({
+    this.documentId = '',
     required this.transactionId,
     required this.requestId,
     required this.name,
@@ -30,6 +32,7 @@ class TransactionsEntity {
   static TransactionsEntity fromDocument(Map<String, Object?> doc,
       [String? id]) {
     return TransactionsEntity(
+      documentId: doc['documentId'] as String? ?? '',
       transactionId: id ?? '',
       requestId: doc['requestId'] as String? ?? 'Unknown Request',
       name: doc['name'] as String? ?? 'Unknown Product',

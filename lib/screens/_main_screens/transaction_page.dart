@@ -219,7 +219,8 @@ class _TransactionMainState extends State<TransactionMain> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => TransactionDetailPage(
-                                  transaction: transaction),
+                                transaction: transaction,
+                              ),
                             ),
                           );
                         },
@@ -271,10 +272,10 @@ class _TransactionMainState extends State<TransactionMain> {
                                                       vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: transaction.status ==
-                                                        'Completed'
+                                                        'completed'
                                                     ? Colors.green
                                                     : transaction.status ==
-                                                            'Pending'
+                                                            'pending'
                                                         ? Colors.orange
                                                         : Colors.red,
                                                 borderRadius:
