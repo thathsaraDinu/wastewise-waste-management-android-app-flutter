@@ -60,7 +60,7 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
                   backgroundImage:
                       AssetImage('assets/images/avatar.jpg'), // Profile image
                 ),
-                const SizedBox(height: 16), // Space between avatar and text
+                const SizedBox(height: 2), // Space between avatar and text
                 const Text(
                   'Eshan Nayanapriya', // Hardcoded Name
                   style: TextStyle(
@@ -93,8 +93,8 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
                       // Settings option with icon
                       ListTile(
                         leading:
-                            const Icon(Icons.settings, color: Colors.black),
-                        title: const Text('Settings'),
+                            const Icon(Icons.help_outline, color: Colors.black),
+                        title: const Text('Help and Support'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
                           // Action for settings option
@@ -120,6 +120,16 @@ class _VendorProfilePageState extends State<VendorProfilePage> {
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
                           // Action for password option
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading:
+                            const Icon(Icons.settings, color: Colors.black),
+                        title: const Text('Settings'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          // Action for settings option
                         },
                       ),
                     ],
