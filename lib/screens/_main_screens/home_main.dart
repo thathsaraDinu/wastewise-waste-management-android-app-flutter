@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:user_repository/user_repository.dart';
 
 class HomeMain extends StatefulWidget {
   const HomeMain({super.key});
@@ -42,6 +44,8 @@ class _HomeMainState extends State<HomeMain> {
 
   @override
   Widget build(BuildContext context) {
+    final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
+
     // Filter the vendorAds list based on the search query
     final List<Map<String, String>> filteredAds = vendorAds
         .where((ad) =>
@@ -69,18 +73,39 @@ class _HomeMainState extends State<HomeMain> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     children: [
                       Row(
                         children: [
-                          Text(
-                            "Hi, Nipun",
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
+                          StreamBuilder<MyUser>(
+                              stream: userRepo.user,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox(height: 35,); // Show loading indicator while waiting
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                      'Error: ${snapshot.error}'); // Show error if there is one
+                                } else if (!snapshot.hasData) {
+                                  return const Text(
+                                    "Hi, User",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ); // Handle case where there's no data
+                                } else {
+                                  MyUser user = snapshot.data!;
+                                  return Text(
+                                    "Hi, ${user.name}",
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  );
+                                }
+                              }),
                         ],
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text(
                             "Welcome",
