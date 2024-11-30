@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:user_repository/user_repository.dart';
 import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_form.dart';
 import 'package:waste_wise/screens/waste_pickup_schedule/waste_pickup_schedule_details.dart';
+import 'package:provider/provider.dart';
 
 class WastePickupScheduleMain extends StatefulWidget {
   const WastePickupScheduleMain({super.key});
@@ -66,6 +68,8 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
 
   @override
   Widget build(BuildContext context) {
+    final userRepo = Provider.of<FirebaseUserRepo>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton(
@@ -99,18 +103,41 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     children: [
                       Row(
                         children: [
-                          Text(
-                            "Hi, Nipun",
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
+                          StreamBuilder<MyUser>(
+                              stream: userRepo.user,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox(
+                                    height: 35,
+                                  ); // Show loading indicator while waiting
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                      'Error: ${snapshot.error}'); // Show error if there is one
+                                } else if (!snapshot.hasData) {
+                                  return const Text(
+                                    "Hi, User",
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ); // Handle case where there's no data
+                                } else {
+                                  MyUser user = snapshot.data!;
+                                  return Text(
+                                    "Hi, ${user.name}",
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  );
+                                }
+                              }),
                         ],
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text(
                             "Welcome",
@@ -120,7 +147,7 @@ class _WastePickupScheduleMainState extends State<WastePickupScheduleMain> {
                                 fontWeight: FontWeight.bold),
                           )
                         ],
-                      )
+                      ),
                     ],
                   ),
                   TextField(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:waste_wise/common_widgets/custom_app_bar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
