@@ -3,25 +3,25 @@
 
 Excited to share my work on WasteWise, a mobile app designed to support UNICEF’s Sustainable Development Goal 12 (Responsible Consumption and Production) by enhancing waste management. Developed with Flutter, the app streamlines waste management processes while promoting sustainable living.
 
-## 📌 Core Features  
+## 📌 Core Features
 
 - **Pickup Scheduling**  
-  Effortless and quick waste pickup scheduling to streamline the process for customers.  
+  Effortless and quick waste pickup scheduling to streamline the process for customers.
 
 - **GPS-Based Pickup Scheduling**  
-  Utilizes GPS to capture the user's location and seamlessly schedule pickups, integrating with Google Maps.  
+  Utilizes GPS to capture the user's location and seamlessly schedule pickups, integrating with Google Maps.
 
 - **Recycled Products Marketplace**  
-  A dedicated marketplace where users can explore and purchase eco-friendly products like biodegradable bags, bottles, and papers.  
+  A dedicated marketplace where users can explore and purchase eco-friendly products like biodegradable bags, bottles, and papers.
 
 - **Push Notifications**  
-  Instant alerts for new recycled products and price drops, keeping users updated on eco-friendly deals.  
+  Admins can send notifications to users for new recycled products and price drops, keeping them updated on eco-friendly deals.
 
 - **Waste Type Categorization**  
-  Organized categorization of waste types and schedules for smooth management.  
+  Organized categorization of waste types and schedules for smooth management.
 
-- **Pickup Status Management**  
-  Vendors can accept or decline requests in real-time, ensuring seamless operations.  
+- **Vendor Management**  
+  Vendors who collect waste can manage their schedules, accept or decline pickup requests in real-time, ensuring smooth and efficient operations.
 
 ---
 
