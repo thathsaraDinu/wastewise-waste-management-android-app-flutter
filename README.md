@@ -5,7 +5,7 @@ Excited to share my work on WasteWise, a mobile app designed to support UNICEF�
 
 ## Features
 
-📌 Core Features:
+📌 Core Features:<br/><br/>
 Pickup Scheduling: Providing quick and efficient waste pickup scheduling for customers.<br/>
 Google Maps Integration: Vendors can easily locate pickup points.<br/>
 Recycled Products Marketplace: Users can browse and purchase eco-friendly products like biodegradable bags, bottles, and papers.<br/>
