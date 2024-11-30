@@ -6,12 +6,12 @@ Excited to share my work on WasteWise, a mobile app designed to support UNICEFâ€
 ## Features
 
 ðŸ“Œ Core Features:
-Real-Time Pickup Scheduling: Seamless communication for scheduling waste pickups between vendors and businesses.
-Instant Notifications: Vendors are alerted immediately when new pickup requests are made.
+Pickup Scheduling: Providing quick and efficient waste pickup scheduling for customers.
 Google Maps Integration: Vendors can easily locate pickup points.
+Recycled Products Marketplace: Users can browse and purchase eco-friendly products like biodegradable bags, bottles, and papers.
+Push Notifications: Get instant alerts for new recycled products or price drops on eco-friendly items.
 Waste Type Categorization: Clear categorization of waste types and schedules.
 Pickup Status Management: Vendors can accept or decline requests in real-time.
-Recycled Products Marketplace: Users can browse and purchase eco-friendly products like biodegradable bags, bottles, and papers.
 
 ![Logo](assets/images/waste-wise-high-resolution-logo-transparent.png)
 
