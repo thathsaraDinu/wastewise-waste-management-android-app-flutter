@@ -23,6 +23,8 @@ Recycled Products Marketplace: Users can browse and purchase eco-friendly produc
     <img src="screenshots/Screenshot_1732944286.png" alt="App Screenshot" width="48%" height="auto">
     <img src="screenshots/Screenshot_1732943245.png" alt="App Screenshot" width="48%" height="auto">
     <img src="screenshots/Screenshot_1732943280.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732950549.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732950506.png" alt="App Screenshot" width="48%" height="auto">
     <img src="screenshots/Screenshot_1732943252.png" alt="App Screenshot" width="48%" height="auto">
     <img src="screenshots/Screenshot_1732943293.png" alt="App Screenshot" width="48%" height="auto">
     <img src="screenshots/Screenshot_1732943263.png" alt="App Screenshot" width="48%" height="auto">
