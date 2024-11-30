@@ -17,15 +17,18 @@ Recycled Products Marketplace: Users can browse and purchase eco-friendly produc
 
 ## Screenshots
 
-<img src="screenshots/Screenshot_1732945039.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732947266.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732944286.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943245.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943280.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943252.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943293.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943263.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732944286.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943321.png" alt="App Screenshot" width="50%">
-<img src="screenshots/Screenshot_1732943345.png" alt="App Screenshot" width="50%">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+    <img src="screenshots/Screenshot_1732945039.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732947266.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732944286.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943245.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943280.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943252.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943293.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943263.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732944286.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943321.png" alt="App Screenshot" width="48%" height="auto">
+    <img src="screenshots/Screenshot_1732943345.png" alt="App Screenshot" width="48%" height="auto">
+</div>
+
 
