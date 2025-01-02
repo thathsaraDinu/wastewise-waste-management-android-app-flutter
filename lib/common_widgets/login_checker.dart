@@ -20,9 +20,12 @@ class LoginChecker extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/waste-wise-high-resolution-logo-transparent.png',
-                    height: 150,
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Image.asset(
+                      'assets/images/waste-wise-high-resolution-logo-transparent.png',
+                      height: 150,
+                    ),
                   ),
                   const SizedBox(height: 40,),
                   const SizedBox(
